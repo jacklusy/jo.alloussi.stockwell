@@ -15,6 +15,9 @@ module.exports = {
     'src/services/api/**/*.{ts,tsx}',
     'src/services/auth/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
+    '!src/sync/index.ts',
+    '!src/features/**/domain/repositories/**',
+    '!src/features/**/domain/**/*.repository.ts',
   ],
   coverageDirectory: 'coverage',
   coverageThreshold: {
@@ -25,10 +28,10 @@ module.exports = {
       branches: 35,
     },
     './src/sync/': {
-      lines: 70,
-      statements: 70,
-      functions: 60,
-      branches: 50,
+      lines: 90,
+      statements: 90,
+      functions: 80,
+      branches: 70,
     },
   },
 };

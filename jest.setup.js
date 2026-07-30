@@ -22,6 +22,7 @@ jest.mock('react-native-mmkv', () => {
 
 jest.mock('react-native-config', () => ({
   API_BASE_URL: 'http://localhost/api/v1',
+  WS_URL: '',
   SENTRY_DSN: '',
   ENV: 'development',
 }));

@@ -55,4 +55,9 @@ describe('Conflict strategies (M-21)', () => {
       action: 'acceptServer',
     });
   });
+
+  it('maps TRANSFER_STOCK to manual and unknown types to serverWins', () => {
+    expect(strategyForMutation('TRANSFER_STOCK').name).toBe('manual');
+    expect(strategyForMutation('UNKNOWN').name).toBe('serverWins');
+  });
 });

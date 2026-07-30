@@ -8,9 +8,11 @@ import { useSyncStatusStore } from '@/services/auth/sync-status-store';
 import { MutationQueue } from '@/sync/queue/mutation-queue';
 import { pushQueueItem } from '@/sync/queue/push-item';
 import { ConflictStore } from '@/sync/conflict/conflict-store';
-import { strategyForMutation } from '@/sync/conflict/strategies';
+import * as conflictStrategies from '@/sync/conflict/strategies';
 import { computeBackoffMs, shouldDeadLetter } from '@/sync/engine/backoff';
 import { pullStockBalances } from '@/sync/pull/incremental-pull';
+import { flushBufferedStockDeltas } from '@/sync/realtime/apply-stock-delta';
+import { realtimeDeltaBuffer } from '@/sync/realtime/delta-buffer';
 import type { SyncEngineState } from '@/sync/types';
 
 const PUSH_BATCH = 20;
@@ -19,6 +21,8 @@ export type SyncEngineDeps = {
   db: DB;
   client: AxiosInstance;
   getWarehouseId: () => string | null;
+  /** Optional — flush buffered WebSocket deltas after push/pull. */
+  afterCycle?: () => Promise<void>;
 };
 
 /**
@@ -105,7 +109,10 @@ export class SyncEngine {
     try {
       // PUSH BEFORE PULL — non-negotiable
       this.setState('PUSHING');
-      await this.pushBatch();
+      const pushOk = await this.pushBatch();
+      if (!pushOk || this.state === 'ERROR') {
+        return;
+      }
 
       this.setState('PULLING');
       const warehouseId = this.deps.getWarehouseId();
@@ -129,15 +136,31 @@ export class SyncEngine {
       });
       this.setState('ERROR');
     } finally {
+      try {
+        if (this.deps.afterCycle) {
+          await this.deps.afterCycle();
+        } else {
+          await flushBufferedStockDeltas({
+            db: this.deps.db,
+            queue: this.queue,
+            buffer: realtimeDeltaBuffer,
+          });
+        }
+      } catch (error) {
+        logger.warn('afterCycle flush failed', {
+          reason: error instanceof Error ? error.message : 'unknown',
+        });
+      }
       await this.publishStatus();
     }
   }
 
-  private async pushBatch(): Promise<void> {
+  /** @returns false when the cycle must abort (e.g. refresh failed). */
+  private async pushBatch(): Promise<boolean> {
     for (let i = 0; i < PUSH_BATCH; i += 1) {
       const item = await this.queue.dequeueNext();
       if (!item) {
-        return;
+        return true;
       }
 
       await this.queue.markInFlight(item.id);
@@ -152,7 +175,7 @@ export class SyncEngine {
         case 'conflict': {
           await this.queue.markConflict(item.id, 'Version conflict');
           await this.conflicts.record(item.id, item.payload, result.serverState);
-          const strategy = strategyForMutation(item.type);
+          const strategy = conflictStrategies.strategyForMutation(item.type);
           const decision = strategy.resolve({
             item,
             serverState: result.serverState as { version: number },
@@ -178,7 +201,7 @@ export class SyncEngine {
             await refreshCoordinator.refresh();
           } catch {
             this.setState('ERROR');
-            return;
+            return false;
           }
           // Resume: continue loop so remaining items push after refresh
           break;
@@ -207,6 +230,7 @@ export class SyncEngine {
       // Yield between items so the JS thread stays responsive
       await new Promise<void>((r) => setTimeout(r, 0));
     }
+    return true;
   }
 
   private async applyAuthoritativeBalance(

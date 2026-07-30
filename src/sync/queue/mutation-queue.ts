@@ -204,4 +204,18 @@ export class MutationQueue {
     const row = result.rows[0] as QueueRow | undefined;
     return row ? mapRow(row) : null;
   }
+
+  /**
+   * True when the entity still has work that must win over a live server delta.
+   * DEAD items do not block — they are terminal and visible in sync centre.
+   */
+  async hasPendingForEntity(entityId: string): Promise<boolean> {
+    const result = await this.db.execute(
+      `SELECT COUNT(*) AS c FROM mutation_queue
+       WHERE entity_id = ?
+         AND status IN ('PENDING', 'IN_FLIGHT', 'FAILED', 'CONFLICT')`,
+      [entityId],
+    );
+    return Number((result.rows[0] as { c?: number } | undefined)?.c ?? 0) > 0;
+  }
 }

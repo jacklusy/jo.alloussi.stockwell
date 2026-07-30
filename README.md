@@ -174,11 +174,11 @@ CI: `.github/workflows/ci.yml` · Release on tag `v*`: `.github/workflows/releas
 | Omitted | Reason |
 |---|---|
 | Push notifications | Privacy + store complexity; low portfolio ROI for MVP |
-| WebSockets | Design documented in offline-sync doc; queue-safe apply is non-trivial |
-| iOS App Store | Deferred — [ADR-M006](docs/adr/ADR-M006-ios-deferred.md) |
+| WebSockets (default off) | Optional client behind `WS_URL` — [ADR-M007](docs/adr/ADR-M007-websocket-deltas.md); leave empty until API socket exists |
+| iOS App Store | Deferred — [ADR-M006](docs/adr/ADR-M006-ios-deferred.md) · [checklist](docs/ios-testflight.md) |
 | 19 screens / full WMS | Cut scope; depth on sync beats breadth |
 | WatermelonDB | Would hide the sync engine we need to demonstrate |
-| Background sync | OS kills it; queue is resumable instead |
+| Periodic background sync | Headless scaffold only — [ADR-M008](docs/adr/ADR-M008-background-sync.md); Doze/BGTask are best-effort |
 
 ### What breaks at 100×
 

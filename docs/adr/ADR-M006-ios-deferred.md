@@ -11,3 +11,5 @@ MVP ships **Android only** via GitHub Actions + Fastlane. iOS is deferred until 
 
 ## Consequences
 README and Play listing are Android-first. `ios/` remains in the repo for future TestFlight work. EAS Build remains an option if a Mac is unavailable later.
+
+**Operational checklist:** [docs/ios-testflight.md](../ios-testflight.md).

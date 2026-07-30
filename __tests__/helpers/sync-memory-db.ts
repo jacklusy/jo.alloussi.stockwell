@@ -137,6 +137,23 @@ export function createSyncMemoryDb(): DB {
         };
       }
 
+      if (
+        q.startsWith('SELECT COUNT(*) AS c FROM mutation_queue') &&
+        q.includes('entity_id = ?') &&
+        q.includes('status IN')
+      ) {
+        const entityId = params[0] as string;
+        const active = new Set(['PENDING', 'IN_FLIGHT', 'FAILED', 'CONFLICT']);
+        return {
+          rows: [
+            {
+              c: queue.filter((r) => r.entity_id === entityId && active.has(r.status))
+                .length,
+            },
+          ],
+        };
+      }
+
       if (q.startsWith('SELECT COUNT(*) AS c FROM mutation_queue WHERE status =')) {
         const statusMatch = /status = '(\w+)'/.exec(q);
         const status = statusMatch?.[1] ?? (params[0] as string);
@@ -302,6 +319,52 @@ export function createSyncMemoryDb(): DB {
             cursor,
             last_full_sync_at: lastFull,
           });
+        }
+        return { rows: [] };
+      }
+
+      if (q.startsWith('INSERT INTO stock_balances') || q.startsWith('INSERT OR REPLACE INTO stock_balances')) {
+        balances.push({
+          id: params[0] as string,
+          tenant_id: (params[1] as string) ?? 't1',
+          warehouse_id: (params[2] as string) ?? 'wh1',
+          location_id: (params[3] as string) ?? 'loc1',
+          product_id: (params[4] as string) ?? 'p1',
+          on_hand: (params[5] as number) ?? 0,
+          reserved: (params[6] as number) ?? 0,
+          version: (params[7] as number) ?? 1,
+          pending_sync: (params[8] as number) ?? 0,
+          updated_at: (params[9] as number) ?? Date.now(),
+        });
+        return { rows: [] };
+      }
+
+      if (q.startsWith('SELECT') && q.includes('FROM stock_balances') && q.includes('WHERE id')) {
+        const id = params[0] as string;
+        const row = balances.find((b) => b.id === id);
+        return { rows: row ? [row] : [] };
+      }
+
+      if (
+        q.startsWith('UPDATE stock_balances') &&
+        q.includes('on_hand') &&
+        q.includes('reserved') &&
+        q.includes('version')
+      ) {
+        const [onHand, reserved, version, updatedAt, id] = params as [
+          number,
+          number,
+          number,
+          number,
+          string,
+        ];
+        const row = balances.find((b) => b.id === id);
+        if (row) {
+          row.on_hand = onHand;
+          row.reserved = reserved;
+          row.version = version;
+          row.pending_sync = 0;
+          row.updated_at = updatedAt;
         }
         return { rows: [] };
       }
