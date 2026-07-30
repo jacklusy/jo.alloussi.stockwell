@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, AccessibilityInfo } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -7,11 +7,12 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { AccessibilityInfo } from 'react-native';
 
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
+import { Icon, type IconName } from '@/ui/icons/Icon';
 import { useTheme } from '@/ui/theme';
+import { t } from '@/i18n';
 
 export type SyncStatus =
   | { kind: 'synced' }
@@ -29,15 +30,34 @@ export type SyncStatusIndicatorProps = {
 function labelFor(status: SyncStatus): string {
   switch (status.kind) {
     case 'synced':
-      return 'Synced';
+      return t('sync.statusSynced');
     case 'pending':
-      return `Pending ${status.count}`;
+      return `${t('sync.statusPending')} ${status.count}`;
     case 'syncing':
-      return 'Syncing';
+      return t('sync.statusSyncing');
     case 'failed':
-      return `Failed ${status.count}`;
+      return `${t('sync.statusFailed')} ${status.count}`;
     case 'conflict':
-      return `Conflicts ${status.count}`;
+      return `${t('sync.statusConflict')} ${status.count}`;
+    default: {
+      const _exhaustive: never = status;
+      return _exhaustive;
+    }
+  }
+}
+
+function iconFor(status: SyncStatus): IconName {
+  switch (status.kind) {
+    case 'synced':
+      return 'check';
+    case 'pending':
+      return 'pending';
+    case 'syncing':
+      return 'sync';
+    case 'failed':
+      return 'failed';
+    case 'conflict':
+      return 'conflict';
     default: {
       const _exhaustive: never = status;
       return _exhaustive;
@@ -52,6 +72,7 @@ export function SyncStatusIndicator({
 }: SyncStatusIndicatorProps): React.JSX.Element {
   const theme = useTheme();
   const rotation = useSharedValue(0);
+  const label = labelFor(status);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,22 +121,13 @@ export function SyncStatusIndicator({
       paddingX={2}
       paddingY={1}
       style={{ minHeight: 48 }}
-      accessibilityRole="button"
-      accessibilityLabel={labelFor(status)}
       accessibilityLiveRegion="polite"
     >
       <Animated.View style={spinStyle}>
-        <Box
-          style={{
-            width: 10,
-            height: 10,
-            borderRadius: 5,
-            backgroundColor: color,
-          }}
-        />
+        <Icon name={iconFor(status)} size={18} color={color} />
       </Animated.View>
       <Text variant="caption" color="secondary">
-        {labelFor(status)}
+        {label}
       </Text>
     </Box>
   );
@@ -125,7 +137,12 @@ export function SyncStatusIndicator({
   }
 
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={labelFor(status)}>
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      hitSlop={8}
+    >
       {content}
     </Pressable>
   );

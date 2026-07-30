@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   useNavigation,
   type CompositeNavigationProp,
@@ -8,16 +9,17 @@ import {
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { Box } from '@/ui/primitives/Box';
-import { Text } from '@/ui/primitives/Text';
 import { SearchBar } from '@/ui/components/SearchBar';
 import { Button } from '@/ui/components/Button';
-import { Skeleton } from '@/ui/feedback/Skeleton';
 import { StateView } from '@/ui/feedback/StateView';
+import { InventoryListSkeleton } from '@/features/inventory/presentation/components/InventoryListSkeleton';
 import { BalanceRow } from '@/features/inventory/presentation/components/BalanceRow';
 import { useInventoryListScreen } from '@/features/inventory/presentation/hooks/useInventoryListScreen';
 import type { BalanceRowViewModel } from '@/features/inventory/presentation/mappers/balance-row.mapper';
 import type { InventoryStackParamList, MainStackParamList } from '@/navigation/types';
 import { Routes } from '@/navigation/routes';
+import { Icon } from '@/ui/icons/Icon';
+import { useTheme } from '@/ui/theme';
 import { t } from '@/i18n';
 
 type ListNav = CompositeNavigationProp<
@@ -28,6 +30,8 @@ type ListNav = CompositeNavigationProp<
 export function InventoryListScreen(): React.JSX.Element {
   const navigation = useNavigation<ListNav>();
   const state = useInventoryListScreen();
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const onPressRow = useCallback(
     (id: string) => {
@@ -52,30 +56,34 @@ export function InventoryListScreen(): React.JSX.Element {
   const keyExtractor = useCallback((item: BalanceRowViewModel) => item.id, []);
 
   return (
-    <Box flex={1} background="background">
+    <Box
+      flex={1}
+      background="background"
+      style={{ paddingBottom: insets.bottom }}
+    >
       <Box padding={4} gap={3} flex={1}>
-        <Box row justify="space-between" align="center">
-          <Text variant="h1">{t('inventory.title')}</Text>
+        <Box row justify="space-between" align="center" gap={3}>
+          <Box flex={1}>
+            <SearchBar
+              value={state.search}
+              onChangeText={state.setSearch}
+              placeholder={t('inventory.search')}
+            />
+          </Box>
           <Button
             label={t('scanner.open')}
             size="sm"
             variant="secondary"
             onPress={openScanner}
             accessibilityLabel={t('scanner.open')}
+            leadingIcon={
+              <Icon name="scan" size={18} color={theme.colors.brand.primary} />
+            }
           />
         </Box>
-        <SearchBar
-          value={state.search}
-          onChangeText={state.setSearch}
-          placeholder={t('inventory.search')}
-        />
 
         {state.isLoading ? (
-          <Box gap={2}>
-            {Array.from({ length: 8 }).map((_, index) => (
-              <Skeleton key={`sk-${index}`} width="100%" height={56} />
-            ))}
-          </Box>
+          <InventoryListSkeleton />
         ) : state.errorMessage ? (
           <StateView
             kind="error"
@@ -85,15 +93,21 @@ export function InventoryListScreen(): React.JSX.Element {
             onAction={state.refresh}
           />
         ) : state.items.length === 0 ? (
-          <StateView
-            kind="empty"
-            headline={
-              state.search ? t('inventory.noResultsHeadline') : t('inventory.emptyHeadline')
-            }
-            body={
-              state.search ? t('inventory.noResultsBody') : t('inventory.emptyBody')
-            }
-          />
+          state.search ? (
+            <StateView
+              kind="empty"
+              headline={t('inventory.noResultsHeadline')}
+              body={t('inventory.noResultsBody')}
+            />
+          ) : (
+            <StateView
+              kind="empty"
+              headline={t('inventory.emptyHeadline')}
+              body={t('inventory.emptyBody')}
+              actionLabel={t('scanner.open')}
+              onAction={openScanner}
+            />
+          )
         ) : (
           <FlashList
             data={state.items}

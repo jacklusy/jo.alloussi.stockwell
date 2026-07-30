@@ -6,14 +6,12 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Text } from '@/ui/primitives/Text';
 import { useTheme } from '@/ui/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export type IconButtonProps = {
-  /** Visible glyph or emoji placeholder until icon set is wired. */
-  icon: string;
+  icon: React.ReactNode;
   accessibilityLabel: string;
   onPress: (event: GestureResponderEvent) => void;
   disabled?: boolean;
@@ -64,9 +62,7 @@ export function IconButton({
       hitSlop={4}
       style={[style, animatedStyle]}
     >
-      <Text variant="h3" color="primary">
-        {icon}
-      </Text>
+      {icon}
     </AnimatedPressable>
   );
 }

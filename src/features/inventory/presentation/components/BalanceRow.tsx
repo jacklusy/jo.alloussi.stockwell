@@ -3,8 +3,10 @@ import React, { memo } from 'react';
 import { ListRow } from '@/ui/components/ListRow';
 import { Text } from '@/ui/primitives/Text';
 import { Badge } from '@/ui/components/Badge';
+import { Icon } from '@/ui/icons/Icon';
 import { useTheme } from '@/ui/theme';
 import type { BalanceRowViewModel } from '@/features/inventory/presentation/mappers/balance-row.mapper';
+import { t } from '@/i18n';
 
 export type BalanceRowProps = {
   item: BalanceRowViewModel;
@@ -27,7 +29,11 @@ function BalanceRowComponent({ item, onPress }: BalanceRowProps): React.JSX.Elem
         <>
           <Text variant="numericSm">{item.quantityLabel}</Text>
           {item.pendingSync ? (
-            <Badge label="Pending" variant="sync-pending" icon="●" />
+            <Badge
+              label={t('inventory.pendingBadge')}
+              variant="sync-pending"
+              icon={<Icon name="pending" size={12} color={theme.colors.sync.pending} />}
+            />
           ) : null}
         </>
       }

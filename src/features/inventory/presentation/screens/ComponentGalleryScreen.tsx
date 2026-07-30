@@ -14,6 +14,7 @@ import {
   SearchBar,
 } from '@/ui/components';
 import { OfflineBanner, Skeleton, StateView, SyncStatusIndicator } from '@/ui/feedback';
+import { Icon } from '@/ui/icons/Icon';
 import { useTheme } from '@/ui/theme';
 
 /** Dev-only visual review surface for the design system. */
@@ -35,7 +36,11 @@ export function ComponentGalleryScreen(): React.JSX.Element {
           <Button label="Secondary" variant="secondary" onPress={() => undefined} />
           <Button label="Loading" loading onPress={() => undefined} />
           <Button label="Disabled" disabled onPress={() => undefined} />
-          <IconButton icon="⚙" accessibilityLabel="Settings" onPress={() => undefined} />
+          <IconButton
+            icon={<Icon name="settings" size={22} color={theme.colors.text.primary} />}
+            accessibilityLabel="Settings"
+            onPress={() => undefined}
+          />
         </Box>
 
         <Box gap={2}>

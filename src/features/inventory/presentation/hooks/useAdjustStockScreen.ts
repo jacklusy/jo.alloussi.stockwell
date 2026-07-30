@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { container, TOKENS } from '@/core/di';
 import type { AdjustStockUseCase } from '@/features/inventory/application/use-cases/adjust-stock.usecase';
 import type { StockBalanceRepository } from '@/features/inventory/domain/repositories/stock-balance.repository';
 import { asBalanceId } from '@/types/ids';
+import { t } from '@/i18n';
 
 export type AdjustStockViewState = {
   sku: string;
@@ -20,7 +21,14 @@ export type AdjustStockViewState = {
   resultingOnHand: number | null;
 };
 
-export function useAdjustStockScreen(balanceId: string): AdjustStockViewState {
+export type AdjustStockScreenOptions = {
+  onSuccess?: (message: string) => void;
+};
+
+export function useAdjustStockScreen(
+  balanceId: string,
+  options?: AdjustStockScreenOptions,
+): AdjustStockViewState {
   const [delta, setDelta] = useState(0);
   const [reason, setReason] = useState('correction');
   const [sku, setSku] = useState('');
@@ -29,6 +37,8 @@ export function useAdjustStockScreen(balanceId: string): AdjustStockViewState {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const onSuccessRef = useRef(options?.onSuccess);
+  onSuccessRef.current = options?.onSuccess;
 
   useEffect(() => {
     let cancelled = false;
@@ -64,8 +74,10 @@ export function useAdjustStockScreen(balanceId: string): AdjustStockViewState {
           return;
         }
         setOnHand(result.value.onHand);
-        setSuccessMessage('Saved — will sync when online');
+        const message = t('inventory.adjustSaved');
+        setSuccessMessage(message);
         setDelta(0);
+        onSuccessRef.current?.(message);
       });
   }, [balanceId, delta, reason]);
 

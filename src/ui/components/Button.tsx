@@ -26,6 +26,7 @@ export type ButtonProps = {
   loading?: boolean;
   accessibilityLabel?: string;
   testID?: string;
+  leadingIcon?: React.ReactNode;
 };
 
 export function Button({
@@ -37,6 +38,7 @@ export function Button({
   loading = false,
   accessibilityLabel,
   testID,
+  leadingIcon,
 }: ButtonProps): React.JSX.Element {
   const theme = useTheme();
   const scale = useSharedValue(1);
@@ -124,9 +126,12 @@ export function Button({
           }
         />
       ) : (
-        <Text variant="button" color={labelColor[variant]}>
-          {label}
-        </Text>
+        <Box row align="center" gap={2}>
+          {leadingIcon}
+          <Text variant="button" color={labelColor[variant]}>
+            {label}
+          </Text>
+        </Box>
       )}
       {/* Preserve pressed background via Box overlay for secondary visual feedback */}
       <Box

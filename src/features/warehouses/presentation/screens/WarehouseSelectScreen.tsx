@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
 import { ListRow } from '@/ui/components/ListRow';
-import { Skeleton } from '@/ui/feedback/Skeleton';
 import { StateView } from '@/ui/feedback/StateView';
+import { InventoryListSkeleton } from '@/features/inventory/presentation/components/InventoryListSkeleton';
 import { container, TOKENS } from '@/core/di';
 import type { WarehouseRepository } from '@/features/warehouses/domain/warehouse.repository';
 import type { Warehouse } from '@/features/warehouses/domain/warehouse.repository';
@@ -17,9 +17,12 @@ export function WarehouseSelectScreen(): React.JSX.Element {
   const [items, setItems] = useState<Warehouse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
+    setError(null);
     void (async () => {
       const repo = container.resolve<WarehouseRepository>(TOKENS.WAREHOUSE_REPOSITORY);
       const result = await repo.list();
@@ -37,7 +40,7 @@ export function WarehouseSelectScreen(): React.JSX.Element {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [reloadKey]);
 
   const onSelect = useCallback(
     (warehouse: Warehouse) => {
@@ -54,17 +57,20 @@ export function WarehouseSelectScreen(): React.JSX.Element {
         {t('warehouse.subtitle')}
       </Text>
       {loading ? (
-        <Box gap={2}>
-          <Skeleton width="100%" height={56} />
-          <Skeleton width="100%" height={56} />
-        </Box>
+        <InventoryListSkeleton count={4} />
       ) : error ? (
-        <StateView kind="error" headline="Could not load warehouses" body={error} />
+        <StateView
+          kind="error"
+          headline={t('warehouse.errorHeadline')}
+          body={error}
+          actionLabel={t('warehouse.retry')}
+          onAction={() => setReloadKey((n) => n + 1)}
+        />
       ) : items.length === 0 ? (
         <StateView
           kind="empty"
-          headline="No warehouses assigned"
-          body="Contact your manager to get warehouse access."
+          headline={t('warehouse.emptyHeadline')}
+          body={t('warehouse.emptyBody')}
         />
       ) : (
         items.map((warehouse) => (

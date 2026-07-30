@@ -3,6 +3,8 @@ import React from 'react';
 import { Button } from '@/ui/components/Button';
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
+import { Icon, type IconName } from '@/ui/icons/Icon';
+import { useTheme } from '@/ui/theme';
 
 export type StateViewKind = 'empty' | 'error' | 'offline' | 'permission-denied';
 
@@ -12,15 +14,15 @@ export type StateViewProps = {
   body: string;
   actionLabel?: string;
   onAction?: () => void;
-  icon?: string;
+  icon?: IconName;
   testID?: string;
 };
 
-const defaultIcons: Record<StateViewKind, string> = {
-  empty: '○',
-  error: '!',
-  offline: '⊘',
-  'permission-denied': '◌',
+const defaultIcons: Record<StateViewKind, IconName> = {
+  empty: 'empty',
+  error: 'error',
+  offline: 'offline',
+  'permission-denied': 'permission',
 };
 
 export function StateView({
@@ -32,6 +34,14 @@ export function StateView({
   icon,
   testID,
 }: StateViewProps): React.JSX.Element {
+  const theme = useTheme();
+  const iconColor =
+    kind === 'error' || kind === 'permission-denied'
+      ? theme.colors.status.danger
+      : kind === 'offline'
+        ? theme.colors.status.warning
+        : theme.colors.text.tertiary;
+
   return (
     <Box
       testID={testID}
@@ -42,9 +52,7 @@ export function StateView({
       gap={3}
       accessibilityRole="summary"
     >
-      <Text variant="display" color="tertiary">
-        {icon ?? defaultIcons[kind]}
-      </Text>
+      <Icon name={icon ?? defaultIcons[kind]} size={48} color={iconColor} />
       <Text variant="h2" align="center">
         {headline}
       </Text>

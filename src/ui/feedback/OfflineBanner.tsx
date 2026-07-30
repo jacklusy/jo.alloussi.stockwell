@@ -10,7 +10,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
+import { Icon } from '@/ui/icons/Icon';
 import { useTheme } from '@/ui/theme';
+import { t } from '@/i18n';
 
 export type OfflineBannerProps = {
   visible: boolean;
@@ -20,7 +22,7 @@ export type OfflineBannerProps = {
 
 export function OfflineBanner({
   visible,
-  message = 'Offline — changes will sync when connected',
+  message = t('offline.banner'),
   testID,
 }: OfflineBannerProps): React.JSX.Element | null {
   const theme = useTheme();
@@ -55,10 +57,6 @@ export function OfflineBanner({
     transform: [{ translateY: translateY.value }],
   }));
 
-  if (!visible && translateY.value === -80) {
-    // still render for exit animation when shared value mid-flight
-  }
-
   return (
     <Animated.View
       pointerEvents={visible ? 'auto' : 'none'}
@@ -77,11 +75,16 @@ export function OfflineBanner({
     >
       <Box
         testID={testID}
+        row
+        align="center"
+        justify="center"
+        gap={2}
         paddingX={4}
         paddingY={2}
         accessibilityLiveRegion="polite"
         accessibilityRole="alert"
       >
+        <Icon name="offline" size={16} color={theme.colors.status.warning} />
         <Text variant="bodySm" color="warning" align="center">
           {message}
         </Text>

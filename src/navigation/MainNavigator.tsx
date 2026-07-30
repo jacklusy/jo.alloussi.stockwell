@@ -22,10 +22,10 @@ import type {
   ModalStackParamList,
   TabsParamList,
 } from '@/navigation/types';
-import { Text } from '@/ui/primitives/Text';
 import { useTheme } from '@/ui/theme';
 import { SyncStatusIndicator } from '@/ui/feedback/SyncStatusIndicator';
 import { useSyncStatusStore } from '@/services/auth/sync-status-store';
+import { Icon, type IconName } from '@/ui/icons/Icon';
 import { t } from '@/i18n';
 
 const MainStack = createNativeStackNavigator<MainStackParamList>();
@@ -33,12 +33,8 @@ const InventoryStack = createNativeStackNavigator<InventoryStackParamList>();
 const ModalStack = createNativeStackNavigator<ModalStackParamList>();
 const Tabs = createBottomTabNavigator<TabsParamList>();
 
-function TabGlyph({ glyph, color }: { glyph: string; color: string }): React.JSX.Element {
-  return (
-    <Text variant="body" style={{ color }}>
-      {glyph}
-    </Text>
-  );
+function TabIcon({ name, color }: { name: IconName; color: string }): React.JSX.Element {
+  return <Icon name={name} size={22} color={color} />;
 }
 
 function HeaderSyncStatus(): React.JSX.Element {
@@ -70,26 +66,42 @@ function InventoryStackNavigator(): React.JSX.Element {
         component={InventoryListScreen}
         options={{ title: t('inventory.title') }}
       />
-      <InventoryStack.Screen name={Routes.BalanceDetail} component={BalanceDetailScreen} />
-      <InventoryStack.Screen name={Routes.AdjustStock} component={AdjustStockScreen} />
+      <InventoryStack.Screen
+        name={Routes.BalanceDetail}
+        component={BalanceDetailScreen}
+        options={{ title: t('inventory.detail') }}
+      />
+      <InventoryStack.Screen
+        name={Routes.AdjustStock}
+        component={AdjustStockScreen}
+        options={{ title: t('inventory.adjust') }}
+      />
     </InventoryStack.Navigator>
   );
 }
 
-function TabGlyphInventory({ color }: { color: string }): React.JSX.Element {
-  return <TabGlyph glyph="▣" color={color} />;
+function TabIconInventory({ color }: { color: string }): React.JSX.Element {
+  return <TabIcon name="inventory" color={color} />;
 }
 
-function TabGlyphSync({ color }: { color: string }): React.JSX.Element {
-  return <TabGlyph glyph="↻" color={color} />;
+function TabIconSync({ color }: { color: string }): React.JSX.Element {
+  return <TabIcon name="sync" color={color} />;
 }
 
-function TabGlyphSettings({ color }: { color: string }): React.JSX.Element {
-  return <TabGlyph glyph="⚙" color={color} />;
+function TabIconSettings({ color }: { color: string }): React.JSX.Element {
+  return <TabIcon name="settings" color={color} />;
 }
 
 function TabsNavigator(): React.JSX.Element {
   const theme = useTheme();
+  const syncStatus = useSyncStatusStore((s) => s.status);
+  const syncBadge =
+    syncStatus.kind === 'pending' ||
+    syncStatus.kind === 'failed' ||
+    syncStatus.kind === 'conflict'
+      ? syncStatus.count
+      : null;
+
   return (
     <Tabs.Navigator
       screenOptions={{
@@ -107,7 +119,7 @@ function TabsNavigator(): React.JSX.Element {
         component={InventoryStackNavigator}
         options={{
           title: t('tabs.inventory'),
-          tabBarIcon: TabGlyphInventory,
+          tabBarIcon: TabIconInventory,
         }}
       />
       <Tabs.Screen
@@ -116,8 +128,18 @@ function TabsNavigator(): React.JSX.Element {
         options={{
           headerShown: true,
           title: t('tabs.sync'),
-          tabBarIcon: TabGlyphSync,
+          tabBarIcon: TabIconSync,
           headerRight: HeaderSyncStatus,
+          ...(syncBadge !== null
+            ? {
+                tabBarBadge: syncBadge,
+                tabBarBadgeStyle: {
+                  backgroundColor: theme.colors.status.danger,
+                  color: theme.colors.brand.onPrimary,
+                  fontSize: 11,
+                },
+              }
+            : {}),
         }}
       />
       <Tabs.Screen
@@ -126,7 +148,7 @@ function TabsNavigator(): React.JSX.Element {
         options={{
           headerShown: true,
           title: t('tabs.settings'),
-          tabBarIcon: TabGlyphSettings,
+          tabBarIcon: TabIconSettings,
         }}
       />
     </Tabs.Navigator>

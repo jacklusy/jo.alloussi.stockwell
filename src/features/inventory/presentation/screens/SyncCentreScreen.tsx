@@ -7,6 +7,7 @@ import { Text } from '@/ui/primitives/Text';
 import { ListRow } from '@/ui/components/ListRow';
 import { Button } from '@/ui/components/Button';
 import { StateView } from '@/ui/feedback/StateView';
+import { InventoryListSkeleton } from '@/features/inventory/presentation/components/InventoryListSkeleton';
 import { useTheme } from '@/ui/theme';
 import { useSyncCentreScreen } from '@/features/inventory/presentation/hooks/useSyncCentreScreen';
 import type { SyncCentreItem } from '@/features/inventory/application/use-cases/sync-centre.usecase';
@@ -34,7 +35,6 @@ export function SyncCentreScreen(): React.JSX.Element {
 
   const onOpenConflict = useCallback(
     (queueItemId: string) => {
-      // Bubbles to Main stack where Modals is registered.
       (navigation.navigate as (name: string, params?: object) => void)(Routes.Modals, {
         screen: Routes.ConflictResolution,
         params: { queueItemId },
@@ -108,7 +108,7 @@ export function SyncCentreScreen(): React.JSX.Element {
   if (state.isLoading && state.isEmpty) {
     return (
       <Box flex={1} background="background" padding={4}>
-        <Text variant="h1">{t('sync.title')}</Text>
+        <InventoryListSkeleton count={5} />
       </Box>
     );
   }
@@ -116,9 +116,6 @@ export function SyncCentreScreen(): React.JSX.Element {
   if (state.isEmpty) {
     return (
       <Box flex={1} background="background">
-        <Box padding={4}>
-          <Text variant="h1">{t('sync.title')}</Text>
-        </Box>
         <StateView
           kind="empty"
           headline={t('sync.emptyHeadline')}
@@ -135,14 +132,13 @@ export function SyncCentreScreen(): React.JSX.Element {
 
   return (
     <Box flex={1} background="background">
-      <Box padding={4}>
-        <Text variant="h1">{t('sync.title')}</Text>
-        {state.errorMessage ? (
-          <Text variant="bodySm" color="danger">
+      {state.errorMessage ? (
+        <Box padding={4}>
+          <Text variant="bodySm" color="danger" accessibilityLiveRegion="polite">
             {state.errorMessage}
           </Text>
-        ) : null}
-      </Box>
+        </Box>
+      ) : null}
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id}

@@ -43,7 +43,7 @@ describe('Badge', () => {
     const { getByLabelText } = wrap(
       <Badge label="Pending" variant="sync-pending" icon="●" testID="badge" />,
     );
-    expect(getByLabelText('● Pending')).toBeTruthy();
+    expect(getByLabelText('Pending')).toBeTruthy();
   });
 });
 
@@ -51,7 +51,7 @@ describe('IconButton', () => {
   it('requires accessibility label and fires press', () => {
     const onPress = jest.fn();
     const { getByLabelText } = wrap(
-      <IconButton icon="⚙" accessibilityLabel="Open settings" onPress={onPress} />,
+      <IconButton icon={<Text>⚙</Text>} accessibilityLabel="Open settings" onPress={onPress} />,
     );
     fireEvent.press(getByLabelText('Open settings'));
     expect(onPress).toHaveBeenCalled();
@@ -60,7 +60,12 @@ describe('IconButton', () => {
   it('does not fire when disabled', () => {
     const onPress = jest.fn();
     const { getByLabelText } = wrap(
-      <IconButton icon="⚙" accessibilityLabel="Open settings" onPress={onPress} disabled />,
+      <IconButton
+        icon={<Text>⚙</Text>}
+        accessibilityLabel="Open settings"
+        onPress={onPress}
+        disabled
+      />,
     );
     fireEvent.press(getByLabelText('Open settings'));
     expect(onPress).not.toHaveBeenCalled();

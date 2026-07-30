@@ -19,8 +19,8 @@ export type BadgeVariant =
 export type BadgeProps = {
   label: string;
   variant?: BadgeVariant;
-  /** Icon/glyph so colour is never the sole carrier of meaning. */
-  icon?: string;
+  /** Icon so colour is never the sole carrier of meaning. */
+  icon?: React.ReactNode;
   testID?: string;
 };
 
@@ -63,13 +63,15 @@ export function Badge({
         minHeight: 24,
       }}
       accessibilityRole="text"
-      accessibilityLabel={icon ? `${icon} ${label}` : label}
+      accessibilityLabel={label}
     >
-      {icon ? (
+      {typeof icon === 'string' ? (
         <Text variant="caption" color={fg}>
           {icon}
         </Text>
-      ) : null}
+      ) : (
+        icon
+      )}
       <Text variant="caption" color={fg}>
         {label}
       </Text>

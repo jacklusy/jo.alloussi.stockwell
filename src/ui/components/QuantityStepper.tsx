@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 import { Pressable, TextInput, type ViewStyle } from 'react-native';
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
@@ -47,7 +46,6 @@ export function QuantityStepper({
       if (disabled) {
         return;
       }
-      ReactNativeHapticFeedback.trigger('impactLight');
       commit(value + delta);
     },
     [commit, disabled, value],

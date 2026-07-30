@@ -13,6 +13,7 @@ import { bootstrapApp } from '@/app/bootstrap/bootstrap-app';
 import { useSessionStore } from '@/services/auth/session-store';
 import { StateView } from '@/ui/feedback/StateView';
 import { Box } from '@/ui/primitives/Box';
+import { t } from '@/i18n';
 
 enableScreens(true);
 enableFreeze(true);
@@ -58,9 +59,9 @@ export function RootNavigator(): React.JSX.Element {
       <Box flex={1} background="background">
         <StateView
           kind="error"
-          headline="Could not start"
-          body={errorMessage ?? 'Reset local data and try again.'}
-          actionLabel="Retry"
+          headline={t('bootstrap.errorHeadline')}
+          body={errorMessage ?? t('bootstrap.errorBody')}
+          actionLabel={t('bootstrap.retry')}
           onAction={() => {
             setPhase('bootstrapping');
             useSessionStore.getState().setHydrated(false);
