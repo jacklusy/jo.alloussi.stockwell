@@ -21,19 +21,15 @@ function redact(context?: Record<string, unknown>): Record<string, unknown> | un
 /** Single logger — console stripped in release via babel plugin. */
 export const logger: Logger = {
   debug: (message, context) => {
-    // eslint-disable-next-line no-console
     console.debug(message, redact(context));
   },
   info: (message, context) => {
-    // eslint-disable-next-line no-console
     console.info(message, redact(context));
   },
   warn: (message, context) => {
-    // eslint-disable-next-line no-console
     console.warn(message, redact(context));
   },
   error: (message, context) => {
-    // eslint-disable-next-line no-console
     console.error(message, redact(context));
   },
 };

@@ -14,6 +14,9 @@ module.exports = {
       },
       'babel-module': {},
     },
+    // Only analyze static imports (v6+ defaults also cover export/require).
+    'boundaries/dependency-nodes': ['import'],
+    'boundaries/legacy-warnings': false,
     'boundaries/elements': [
       { type: 'core-domain', pattern: 'src/core/domain/*' },
       { type: 'core', pattern: 'src/core/*' },
@@ -31,6 +34,8 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',
+    // Fire-and-forget promises are intentional in RN effects / schedulers.
+    'no-void': 'off',
     'no-restricted-imports': [
       'error',
       {
@@ -43,61 +48,70 @@ module.exports = {
         ],
       },
     ],
-    'boundaries/element-types': [
+    'boundaries/dependencies': [
       'error',
       {
         default: 'allow',
-        rules: [
+        policies: [
           {
-            from: ['core-domain', 'feature-domain'],
+            from: { type: ['core-domain', 'feature-domain'] },
             disallow: [
-              'feature-presentation',
-              'feature-data',
-              'ui',
-              'navigation',
-              'services',
-              'storage',
-              'sync',
-              'app',
+              { to: { type: 'feature-presentation' } },
+              { to: { type: 'feature-data' } },
+              { to: { type: 'ui' } },
+              { to: { type: 'navigation' } },
+              { to: { type: 'services' } },
+              { to: { type: 'storage' } },
+              { to: { type: 'sync' } },
+              { to: { type: 'app' } },
             ],
-            message: 'Domain must stay pure — no React, RN, data, or infra imports.',
+            message:
+              'Domain must stay pure — no React, RN, data, or infra imports.',
           },
           {
-            from: ['feature-application'],
+            // Use cases may orchestrate via injected sync/services/storage.
+            // They must not reach into presentation, data, or UI.
+            from: { type: 'feature-application' },
             disallow: [
-              'feature-presentation',
-              'feature-data',
-              'ui',
-              'navigation',
-              'services',
-              'storage',
-              'sync',
-              'app',
+              { to: { type: 'feature-presentation' } },
+              { to: { type: 'feature-data' } },
+              { to: { type: 'ui' } },
+              { to: { type: 'navigation' } },
+              { to: { type: 'app' } },
             ],
-            message: 'Application may only import domain.',
+            message:
+              'Application must not import presentation, data, ui, navigation, or app.',
           },
           {
-            from: ['feature-presentation'],
-            disallow: ['feature-data', 'storage', 'sync'],
+            from: { type: 'feature-presentation' },
+            disallow: [
+              { to: { type: 'feature-data' } },
+              { to: { type: 'storage' } },
+              { to: { type: 'sync' } },
+            ],
             message: 'Presentation must not import data, storage, or sync directly.',
           },
           {
-            from: ['ui'],
+            from: { type: 'ui' },
             disallow: [
-              'feature-domain',
-              'feature-application',
-              'feature-data',
-              'feature-presentation',
-              'services',
-              'storage',
-              'sync',
+              { to: { type: 'feature-domain' } },
+              { to: { type: 'feature-application' } },
+              { to: { type: 'feature-data' } },
+              { to: { type: 'feature-presentation' } },
+              { to: { type: 'services' } },
+              { to: { type: 'storage' } },
+              { to: { type: 'sync' } },
             ],
             message: 'UI kit must not know the domain.',
           },
           {
-            from: ['navigation'],
-            disallow: ['feature-data', 'services', 'storage', 'sync'],
-            message: 'Navigation must not import data or infrastructure.',
+            from: { type: 'navigation' },
+            disallow: [
+              { to: { type: 'feature-data' } },
+              { to: { type: 'storage' } },
+              { to: { type: 'sync' } },
+            ],
+            message: 'Navigation must not import data, storage, or sync.',
           },
         ],
       },
@@ -137,7 +151,7 @@ module.exports = {
         'jest.setup.js',
       ],
       rules: {
-        'boundaries/element-types': 'off',
+        'boundaries/dependencies': 'off',
         'no-restricted-imports': 'off',
       },
     },

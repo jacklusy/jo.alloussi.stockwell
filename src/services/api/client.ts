@@ -32,7 +32,7 @@ function backoffMs(attempt: number): number {
   return base + jitter;
 }
 
-function shouldRetry(error: AxiosError, config: RetryConfig): boolean {
+function shouldRetry(error: AxiosError, _config: RetryConfig): boolean {
   const status = error.response?.status;
   if (status === 429) {
     return true;

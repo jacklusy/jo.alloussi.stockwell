@@ -3,11 +3,7 @@ import type { DB } from '@op-engineering/op-sqlite';
 import { Result } from '@/core/domain';
 import { NotFoundError, ServerError, ValidationError, type AppError } from '@/core/errors';
 import type { StockBalance } from '@/features/inventory/domain/entities/stock-balance';
-import type {
-  ListBalancesQuery,
-  PaginatedBalances,
-  StockBalanceRepository,
-} from '@/features/inventory/domain/repositories/stock-balance.repository';
+import type { StockBalanceRepository } from '@/features/inventory/domain/repositories/stock-balance.repository';
 import {
   mapBalanceDomainToRow,
   mapBalanceRowToDomain,
