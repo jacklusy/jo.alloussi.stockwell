@@ -10,9 +10,8 @@
     "noImplicitReturns": true,
     "useUnknownInCatchVariables": true,
     "noImplicitAny": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
