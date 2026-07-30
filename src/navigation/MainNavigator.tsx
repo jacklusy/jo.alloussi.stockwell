@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -6,6 +7,7 @@ import {
   AdjustStockScreen,
   BalanceDetailScreen,
   ComponentGalleryScreen,
+  ConflictResolutionScreen,
   InventoryListScreen,
   SettingsScreen,
   SyncCentreScreen,
@@ -15,14 +17,18 @@ import { Routes } from '@/navigation/routes';
 import type {
   InventoryStackParamList,
   MainStackParamList,
+  ModalStackParamList,
   TabsParamList,
 } from '@/navigation/types';
 import { Text } from '@/ui/primitives/Text';
 import { useTheme } from '@/ui/theme';
+import { SyncStatusIndicator } from '@/ui/feedback/SyncStatusIndicator';
+import { useSyncStatusStore } from '@/services/auth/sync-status-store';
 import { t } from '@/i18n';
 
 const MainStack = createNativeStackNavigator<MainStackParamList>();
 const InventoryStack = createNativeStackNavigator<InventoryStackParamList>();
+const ModalStack = createNativeStackNavigator<ModalStackParamList>();
 const Tabs = createBottomTabNavigator<TabsParamList>();
 
 function TabGlyph({ glyph, color }: { glyph: string; color: string }): React.JSX.Element {
@@ -30,6 +36,19 @@ function TabGlyph({ glyph, color }: { glyph: string; color: string }): React.JSX
     <Text variant="body" style={{ color }}>
       {glyph}
     </Text>
+  );
+}
+
+function HeaderSyncStatus(): React.JSX.Element {
+  const status = useSyncStatusStore((s) => s.status);
+  const navigation = useNavigation();
+  return (
+    <SyncStatusIndicator
+      status={status}
+      onPress={() => {
+        navigation.navigate(Routes.SyncCentre as never);
+      }}
+    />
   );
 }
 
@@ -41,6 +60,7 @@ function InventoryStackNavigator(): React.JSX.Element {
         headerStyle: { backgroundColor: theme.colors.surface.background },
         headerTintColor: theme.colors.text.primary,
         contentStyle: { backgroundColor: theme.colors.surface.background },
+        headerRight: HeaderSyncStatus,
       }}
     >
       <InventoryStack.Screen
@@ -54,15 +74,15 @@ function InventoryStackNavigator(): React.JSX.Element {
   );
 }
 
-function InventoryTabIcon({ color }: { color: string }): React.JSX.Element {
+function TabGlyphInventory({ color }: { color: string }): React.JSX.Element {
   return <TabGlyph glyph="▣" color={color} />;
 }
 
-function SyncTabIcon({ color }: { color: string }): React.JSX.Element {
+function TabGlyphSync({ color }: { color: string }): React.JSX.Element {
   return <TabGlyph glyph="↻" color={color} />;
 }
 
-function SettingsTabIcon({ color }: { color: string }): React.JSX.Element {
+function TabGlyphSettings({ color }: { color: string }): React.JSX.Element {
   return <TabGlyph glyph="⚙" color={color} />;
 }
 
@@ -85,7 +105,7 @@ function TabsNavigator(): React.JSX.Element {
         component={InventoryStackNavigator}
         options={{
           title: t('tabs.inventory'),
-          tabBarIcon: InventoryTabIcon,
+          tabBarIcon: TabGlyphInventory,
         }}
       />
       <Tabs.Screen
@@ -94,7 +114,8 @@ function TabsNavigator(): React.JSX.Element {
         options={{
           headerShown: true,
           title: t('tabs.sync'),
-          tabBarIcon: SyncTabIcon,
+          tabBarIcon: TabGlyphSync,
+          headerRight: HeaderSyncStatus,
         }}
       />
       <Tabs.Screen
@@ -103,10 +124,29 @@ function TabsNavigator(): React.JSX.Element {
         options={{
           headerShown: true,
           title: t('tabs.settings'),
-          tabBarIcon: SettingsTabIcon,
+          tabBarIcon: TabGlyphSettings,
         }}
       />
     </Tabs.Navigator>
+  );
+}
+
+function ModalsNavigator(): React.JSX.Element {
+  const theme = useTheme();
+  return (
+    <ModalStack.Navigator
+      screenOptions={{
+        presentation: 'modal',
+        headerStyle: { backgroundColor: theme.colors.surface.background },
+        headerTintColor: theme.colors.text.primary,
+      }}
+    >
+      <ModalStack.Screen
+        name={Routes.ConflictResolution}
+        component={ConflictResolutionScreen}
+        options={{ title: t('sync.conflictTitle') }}
+      />
+    </ModalStack.Navigator>
   );
 }
 
@@ -130,6 +170,11 @@ export function MainNavigator(): React.JSX.Element {
         name={Routes.Tabs}
         component={TabsNavigator}
         options={{ headerShown: false }}
+      />
+      <MainStack.Screen
+        name={Routes.Modals}
+        component={ModalsNavigator}
+        options={{ headerShown: false, presentation: 'modal' }}
       />
       {__DEV__ ? (
         <MainStack.Screen

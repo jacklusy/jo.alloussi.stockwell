@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { RootNavigator } from '@/navigation';
 import { QueryProvider } from '@/app/providers/QueryProvider';
+import { SyncProvider } from '@/app/providers/SyncProvider';
 import { BottomSheetModalProvider, ToastProvider } from '@/ui/components';
 import { ThemeProvider, useTheme } from '@/ui/theme';
 
@@ -24,12 +25,14 @@ export function App(): React.JSX.Element {
       <SafeAreaProvider>
         <ThemeProvider>
           <QueryProvider>
-            <BottomSheetModalProvider>
-              <ToastProvider>
-                <ThemedStatusBar />
-                <RootNavigator />
-              </ToastProvider>
-            </BottomSheetModalProvider>
+            <SyncProvider>
+              <BottomSheetModalProvider>
+                <ToastProvider>
+                  <ThemedStatusBar />
+                  <RootNavigator />
+                </ToastProvider>
+              </BottomSheetModalProvider>
+            </SyncProvider>
           </QueryProvider>
         </ThemeProvider>
       </SafeAreaProvider>

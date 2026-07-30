@@ -1,7 +1,7 @@
 import type { DB } from '@op-engineering/op-sqlite';
 
 import { Result } from '@/core/domain';
-import { ServerError, type AppError } from '@/core/errors';
+import { NotFoundError, ServerError, ValidationError, type AppError } from '@/core/errors';
 import type { StockBalance } from '@/features/inventory/domain/entities/stock-balance';
 import type {
   ListBalancesQuery,
@@ -15,12 +15,37 @@ import {
 } from '@/features/inventory/data/mappers/stock-balance.mapper';
 import type { BalanceId } from '@/types/ids';
 
+const BALANCE_SELECT = `SELECT
+  b.id, b.tenant_id, b.warehouse_id, b.location_id, b.product_id,
+  p.sku, p.name AS product_name, l.code AS location_code,
+  b.on_hand, b.reserved, b.version, b.pending_sync, b.updated_at
+FROM stock_balances b
+JOIN products p ON p.id = b.product_id
+JOIN locations l ON l.id = b.location_id`;
+
 /**
  * Local-first repository. Filtering/sorting happen in SQL.
  */
 export function createStockBalanceRepository(raw: DB): StockBalanceRepository {
+  async function getById(id: BalanceId): Promise<Result<StockBalance | null, AppError>> {
+    try {
+      const result = await raw.execute(
+        `${BALANCE_SELECT}
+         WHERE b.id = ?
+         LIMIT 1`,
+        [id],
+      );
+      const row = result.rows[0] as StockBalanceRow | undefined;
+      return Result.ok(row ? mapBalanceRowToDomain(row) : null);
+    } catch (error) {
+      return Result.err(
+        new ServerError(error instanceof Error ? error.message : 'Get balance failed'),
+      );
+    }
+  }
+
   return {
-    async list(query: ListBalancesQuery): Promise<Result<PaginatedBalances, AppError>> {
+    list: async (query) => {
       try {
         const limit = Math.min(query.limit, 100);
         const offset = (query.page - 1) * limit;
@@ -54,13 +79,7 @@ export function createStockBalanceRepository(raw: DB): StockBalanceRepository {
 
         const listParams = [...params, limit, offset];
         const listResult = await raw.execute(
-          `SELECT
-             b.id, b.tenant_id, b.warehouse_id, b.location_id, b.product_id,
-             p.sku, p.name AS product_name, l.code AS location_code,
-             b.on_hand, b.reserved, b.version, b.pending_sync, b.updated_at
-           FROM stock_balances b
-           JOIN products p ON p.id = b.product_id
-           JOIN locations l ON l.id = b.location_id
+          `${BALANCE_SELECT}
            WHERE ${whereSql}
            ORDER BY p.sku ASC
            LIMIT ? OFFSET ?`,
@@ -76,30 +95,65 @@ export function createStockBalanceRepository(raw: DB): StockBalanceRepository {
       }
     },
 
-    async getById(id: BalanceId): Promise<Result<StockBalance | null, AppError>> {
+    getById,
+
+    async applyOptimisticDelta(id, delta) {
       try {
-        const result = await raw.execute(
-          `SELECT
-             b.id, b.tenant_id, b.warehouse_id, b.location_id, b.product_id,
-             p.sku, p.name AS product_name, l.code AS location_code,
-             b.on_hand, b.reserved, b.version, b.pending_sync, b.updated_at
-           FROM stock_balances b
-           JOIN products p ON p.id = b.product_id
-           JOIN locations l ON l.id = b.location_id
-           WHERE b.id = ?
-           LIMIT 1`,
-          [id],
+        const existing = await getById(id);
+        if (!existing.ok) {
+          return existing;
+        }
+        if (!existing.value) {
+          return Result.err(new NotFoundError('Balance not found'));
+        }
+        const nextOnHand = existing.value.onHand + delta;
+        if (nextOnHand < 0) {
+          return Result.err(
+            new ValidationError(
+              `Adjustment ${delta} would make on-hand negative`,
+              'Cannot reduce stock below zero',
+            ),
+          );
+        }
+        await raw.execute(
+          `UPDATE stock_balances
+           SET on_hand = ?, pending_sync = 1, updated_at = ?
+           WHERE id = ?`,
+          [nextOnHand, Date.now(), id],
         );
-        const row = result.rows[0] as StockBalanceRow | undefined;
-        return Result.ok(row ? mapBalanceRowToDomain(row) : null);
+        const updated = await getById(id);
+        if (!updated.ok || !updated.value) {
+          return Result.err(new ServerError('Optimistic update failed'));
+        }
+        return Result.ok(updated.value);
       } catch (error) {
         return Result.err(
-          new ServerError(error instanceof Error ? error.message : 'Get balance failed'),
+          new ServerError(
+            error instanceof Error ? error.message : 'Optimistic update failed',
+          ),
         );
       }
     },
 
-    async upsertMany(balances: StockBalance[]): Promise<Result<void, AppError>> {
+    async applyAuthoritative(id, onHand, version) {
+      try {
+        await raw.execute(
+          `UPDATE stock_balances
+           SET on_hand = ?, version = ?, pending_sync = 0, updated_at = ?
+           WHERE id = ?`,
+          [onHand, version, Date.now(), id],
+        );
+        return Result.ok(undefined);
+      } catch (error) {
+        return Result.err(
+          new ServerError(
+            error instanceof Error ? error.message : 'Authoritative update failed',
+          ),
+        );
+      }
+    },
+
+    async upsertMany(balances) {
       try {
         for (const balance of balances) {
           const row = mapBalanceDomainToRow(balance);

@@ -99,6 +99,14 @@ export function useInventoryListScreen(): InventoryListViewState {
   const refresh = useCallback(() => {
     setIsRefreshing(true);
     void fetchPage(1, true);
+    try {
+      const engine = container.resolve<{ run: (reason?: string) => Promise<void> }>(
+        TOKENS.SYNC_ENGINE,
+      );
+      void engine.run('pull-to-refresh');
+    } catch {
+      // Engine may be unavailable in isolated tests
+    }
   }, [fetchPage]);
 
   const isOffline =

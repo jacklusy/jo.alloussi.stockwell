@@ -70,7 +70,7 @@ export function mapAxiosError(error: unknown): AppError {
     case 404:
       return new NotFoundError();
     case 409:
-      return new ConflictError();
+      return new ConflictError('Conflict', data);
     case 429: {
       const retryAfter = err.response.headers?.['retry-after'];
       const seconds = retryAfter ? Number(retryAfter) : undefined;

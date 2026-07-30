@@ -9,7 +9,6 @@ import { Text } from '@/ui/primitives/Text';
 import { SearchBar } from '@/ui/components/SearchBar';
 import { Skeleton } from '@/ui/feedback/Skeleton';
 import { StateView } from '@/ui/feedback/StateView';
-import { OfflineBanner } from '@/ui/feedback/OfflineBanner';
 import { BalanceRow } from '@/features/inventory/presentation/components/BalanceRow';
 import { useInventoryListScreen } from '@/features/inventory/presentation/hooks/useInventoryListScreen';
 import type { BalanceRowViewModel } from '@/features/inventory/presentation/mappers/balance-row.mapper';
@@ -40,7 +39,6 @@ export function InventoryListScreen(): React.JSX.Element {
 
   return (
     <Box flex={1} background="background">
-      <OfflineBanner visible={state.isOffline} />
       <Box padding={4} gap={3} flex={1}>
         <Text variant="h1">{t('inventory.title')}</Text>
         <SearchBar
