@@ -1,10 +1,19 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in /usr/local/Cellar/android-sdk/24.3.3/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Stockwell release ProGuard / R8 rules
+# Verify a release build on a physical device after any native module change.
+# Reflection-heavy libraries break silently if keeps are missing.
 
-# Add any project specific keep options here:
+-keep class com.facebook.react.** { *; }
+-keep class com.facebook.hermes.** { *; }
+-keep class com.facebook.jni.** { *; }
+
+# Keychain / MMKV / op-sqlite / Reanimated / VisionCamera
+-keep class com.oblador.keychain.** { *; }
+-keep class com.tencent.mmkv.** { *; }
+-keep class com.optech.** { *; }
+-keep class com.swmansion.reanimated.** { *; }
+-keep class com.mrousavy.camera.** { *; }
+-keep class io.sentry.** { *; }
+
+-dontwarn com.facebook.react.**
+-dontwarn com.swmansion.**
+-dontwarn io.sentry.**

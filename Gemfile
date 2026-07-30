@@ -9,6 +9,9 @@ gem 'activesupport', '>= 6.1.7.5', '!= 7.1.0'
 gem 'xcodeproj', '< 1.26.0'
 gem 'concurrent-ruby', '< 1.3.4'
 
+# Android release (Fastlane)
+gem 'fastlane'
+
 # Ruby 3.4.0 has removed some libraries from the standard library.
 gem 'bigdecimal'
 gem 'logger'

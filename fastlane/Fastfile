@@ -1,4 +1,4 @@
-# Fastlane — Android release scaffolding (M-16)
+# Fastlane — Android release scaffolding (M-16 / M-30)
 # Fill credentials via GitHub Secrets / local env — never commit keystores.
 
 default_platform(:android)
@@ -30,6 +30,16 @@ platform :android do
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,
+      json_key: ENV["PLAY_JSON_KEY_PATH"]
+    )
+  end
+
+  desc "Upload AAB to Play production (only after M-32 gate)"
+  lane :production do
+    upload_to_play_store(
+      track: "production",
+      aab: "android/app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_apk: true,
       json_key: ENV["PLAY_JSON_KEY_PATH"]
     )
   end

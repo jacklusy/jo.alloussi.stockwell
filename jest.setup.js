@@ -70,6 +70,13 @@ jest.mock('react-native-vision-camera', () => {
   };
 });
 
+jest.mock('@sentry/react-native', () => ({
+  init: jest.fn(),
+  captureException: jest.fn(),
+  captureMessage: jest.fn(),
+  withScope: jest.fn((fn) => fn({ setExtras: jest.fn() })),
+}));
+
 jest.mock('react-native-permissions', () => ({
   PERMISSIONS: {
     IOS: { CAMERA: 'ios.camera' },

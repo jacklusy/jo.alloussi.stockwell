@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Stockwell</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; color: #1a1a1a; }
+    h1, h2 { line-height: 1.2; }
+  </style>
+</head>
+<body>
+  <h1>Privacy Policy — Stockwell</h1>
+  <p><strong>Last updated:</strong> 2026-07-30<br />
+  <strong>App:</strong> Stockwell (<code>jo.alloussi.stockwell</code>)</p>
+
+  <h2>What Stockwell is</h2>
+  <p>Stockwell is a mobile inventory client for warehouse operators. It talks to your organisation's Stockwell API and stores inventory data on the device so work continues offline.</p>
+
+  <h2>Data we process</h2>
+  <h3>Account &amp; authentication</h3>
+  <ul>
+    <li>Email and password are sent to your organisation's API over HTTPS to sign in.</li>
+    <li>Access and refresh tokens are stored only in the device Keychain / Android Keystore. They are not written to MMKV, SQLite, or logs.</li>
+  </ul>
+  <h3>Operational data</h3>
+  <ul>
+    <li>Warehouse, product, location, and stock balance data are cached in on-device SQLite.</li>
+    <li>Pending stock adjustments are queued locally until they sync.</li>
+  </ul>
+  <h3>Crash reports (optional)</h3>
+  <ul>
+    <li>If enabled, crash reports may be sent to Sentry with passwords, tokens, and email scrubbed.</li>
+    <li>No advertising SDKs or product analytics in the MVP.</li>
+  </ul>
+
+  <h2>What we do not collect</h2>
+  <ul>
+    <li>Precise location</li>
+    <li>Contacts, photos, or microphone (camera only when you choose to scan)</li>
+    <li>Advertising identifiers for ads</li>
+  </ul>
+
+  <h2>Permissions</h2>
+  <ul>
+    <li><strong>Internet</strong> — sync with the API</li>
+    <li><strong>Camera</strong> — optional barcode scanning; manual SKU entry always available</li>
+    <li><strong>Biometrics</strong> — optional unlock of stored credentials</li>
+  </ul>
+
+  <h2>Retention</h2>
+  <p>Local data remains until logout (with confirmation if unsynced work exists) or uninstall. Server retention is controlled by your organisation's backend.</p>
+
+  <h2>Contact</h2>
+  <p>Questions: replace with your contact email before publishing.</p>
+</body>
+</html>
