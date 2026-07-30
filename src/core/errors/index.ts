@@ -35,10 +35,7 @@ export class NotFoundError extends AppError {
 }
 
 export class ConflictError extends AppError {
-  constructor(
-    message = 'Conflict',
-    readonly serverState?: unknown,
-  ) {
+  constructor(message = 'Conflict', readonly serverState?: unknown) {
     super(message, 'CONFLICT', 'Someone else changed this', 'Conflict resolution flow');
   }
 }

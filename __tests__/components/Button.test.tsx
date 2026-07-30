@@ -18,9 +18,7 @@ describe('Button', () => {
 
   it('does not fire when disabled', () => {
     const onPress = jest.fn();
-    const { getByTestId } = wrap(
-      <Button label="Save" onPress={onPress} disabled testID="btn" />,
-    );
+    const { getByTestId } = wrap(<Button label="Save" onPress={onPress} disabled testID="btn" />);
     fireEvent.press(getByTestId('btn'));
     expect(onPress).not.toHaveBeenCalled();
   });

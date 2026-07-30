@@ -17,7 +17,11 @@ function createMemoryDb(): DB & { dump: () => Map<string, unknown[]> } {
       if (q.startsWith('CREATE TABLE IF NOT EXISTS schema_migrations')) {
         return { rows: [] };
       }
-      if (q.startsWith('CREATE TABLE') || q.startsWith('CREATE INDEX') || q.startsWith('CREATE UNIQUE')) {
+      if (
+        q.startsWith('CREATE TABLE') ||
+        q.startsWith('CREATE INDEX') ||
+        q.startsWith('CREATE UNIQUE')
+      ) {
         const match = /CREATE TABLE IF NOT EXISTS (\w+)/.exec(q);
         if (match?.[1] && !tables.has(match[1])) {
           tables.set(match[1], []);
@@ -39,10 +43,10 @@ function createMemoryDb(): DB & { dump: () => Map<string, unknown[]> } {
         const version = params[0] as number;
         const appliedAt = params[1] as number;
         const rows = tables.get('schema_migrations') ?? [];
-        tables.set(
-          'schema_migrations',
-          [...rows.filter((r) => (r as { version: number }).version !== version), { version, applied_at: appliedAt }],
-        );
+        tables.set('schema_migrations', [
+          ...rows.filter((r) => (r as { version: number }).version !== version),
+          { version, applied_at: appliedAt },
+        ]);
         return { rows: [] };
       }
       if (q.startsWith('INSERT INTO mutation_queue')) {
@@ -75,14 +79,16 @@ describe('DB migrations', () => {
     const db = createMemoryDb();
     await migrateTo(db, 1);
 
-    await db.execute(
-      'INSERT INTO mutation_queue (id, idempotency_key, payload) VALUES (?, ?, ?)',
-      ['q1', 'idem-1', '{"delta":5}'],
-    );
-    await db.execute(
-      'INSERT INTO mutation_queue (id, idempotency_key, payload) VALUES (?, ?, ?)',
-      ['q2', 'idem-2', '{"delta":-2}'],
-    );
+    await db.execute('INSERT INTO mutation_queue (id, idempotency_key, payload) VALUES (?, ?, ?)', [
+      'q1',
+      'idem-1',
+      '{"delta":5}',
+    ]);
+    await db.execute('INSERT INTO mutation_queue (id, idempotency_key, payload) VALUES (?, ?, ?)', [
+      'q2',
+      'idem-2',
+      '{"delta":-2}',
+    ]);
 
     expect(MIGRATIONS[2]?.some((s) => s.includes('mutation_queue') && s.includes('DROP'))).toBe(
       false,

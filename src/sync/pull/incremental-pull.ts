@@ -40,10 +40,7 @@ async function readCursor(db: DB, entity: SyncEntity): Promise<string | null> {
   if (!row) {
     return null;
   }
-  if (
-    row.last_full_sync_at &&
-    Date.now() - row.last_full_sync_at > FULL_SYNC_MAX_AGE_MS
-  ) {
+  if (row.last_full_sync_at && Date.now() - row.last_full_sync_at > FULL_SYNC_MAX_AGE_MS) {
     return null;
   }
   return row.cursor ?? null;

@@ -67,8 +67,7 @@ export function createApiClient(options: CreateClientOptions = {}): AxiosInstanc
       return tokens?.accessToken ?? null;
     });
 
-  const getTenantId =
-    options.getTenantId ?? (() => useSessionStore.getState().tenantId);
+  const getTenantId = options.getTenantId ?? (() => useSessionStore.getState().tenantId);
 
   client.interceptors.request.use(async (config: RetryConfig) => {
     config.headers = config.headers ?? {};

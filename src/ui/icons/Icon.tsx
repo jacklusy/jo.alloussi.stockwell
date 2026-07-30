@@ -164,12 +164,7 @@ export function Icon({ name, size = 24, color, testID }: IconProps): React.JSX.E
       return (
         <Svg {...common}>
           <Circle cx={12} cy={12} r={8.25} stroke={color} strokeWidth={1.75} />
-          <Path
-            d="M9 9l6 6M15 9l-6 6"
-            stroke={color}
-            strokeWidth={1.75}
-            strokeLinecap="round"
-          />
+          <Path d="M9 9l6 6M15 9l-6 6" stroke={color} strokeWidth={1.75} strokeLinecap="round" />
         </Svg>
       );
     case 'scan':
@@ -200,12 +195,7 @@ export function Icon({ name, size = 24, color, testID }: IconProps): React.JSX.E
     case 'torch':
       return (
         <Svg {...common}>
-          <Path
-            d="M9 3h6l1 4H8l1-4Z"
-            stroke={color}
-            strokeWidth={1.75}
-            strokeLinejoin="round"
-          />
+          <Path d="M9 3h6l1 4H8l1-4Z" stroke={color} strokeWidth={1.75} strokeLinejoin="round" />
           <Path d="M10 7v10a2 2 0 0 0 4 0V7" stroke={color} strokeWidth={1.75} />
         </Svg>
       );

@@ -17,8 +17,7 @@ export function useSettingsScreen(): SettingsViewState {
   const preference = useThemeStore((s) => s.preference);
 
   const cycleTheme = useCallback(() => {
-    const next =
-      preference === 'system' ? 'light' : preference === 'light' ? 'dark' : 'system';
+    const next = preference === 'system' ? 'light' : preference === 'light' ? 'dark' : 'system';
     setPreference(next);
   }, [preference, setPreference]);
 

@@ -1,10 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import {
-  Camera,
-  useCameraDevice,
-  useCodeScanner,
-} from 'react-native-vision-camera';
+import { Camera, useCameraDevice, useCodeScanner } from 'react-native-vision-camera';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ModalStackParamList } from '@/navigation/types';
@@ -18,10 +14,7 @@ import { useScannerScreen } from '@/features/inventory/presentation/hooks/useSca
 import { DEFAULT_CODE_TYPES } from '@/services/camera/types';
 import { t } from '@/i18n';
 
-export type ScannerScreenProps = NativeStackScreenProps<
-  ModalStackParamList,
-  typeof Routes.Scanner
->;
+export type ScannerScreenProps = NativeStackScreenProps<ModalStackParamList, typeof Routes.Scanner>;
 
 export function ScannerScreen({ navigation }: ScannerScreenProps): React.JSX.Element {
   const theme = useTheme();
@@ -32,16 +25,13 @@ export function ScannerScreen({ navigation }: ScannerScreenProps): React.JSX.Ele
     (balanceId) => {
       navigation.goBack();
       // Bubble to inventory stack
-      (navigation.getParent()?.navigate as (name: string, params?: object) => void)?.(
-        Routes.Tabs,
-        {
-          screen: Routes.InventoryTab,
-          params: {
-            screen: Routes.BalanceDetail,
-            params: { balanceId },
-          },
+      (navigation.getParent()?.navigate as (name: string, params?: object) => void)?.(Routes.Tabs, {
+        screen: Routes.InventoryTab,
+        params: {
+          screen: Routes.BalanceDetail,
+          params: { balanceId },
         },
-      );
+      });
     },
     () => {
       navigation.replace(Routes.PermissionDenied, { permission: 'camera' });
@@ -69,8 +59,7 @@ export function ScannerScreen({ navigation }: ScannerScreenProps): React.JSX.Ele
     onCodeScanned,
   });
 
-  const cameraAllowed =
-    state.permission === 'granted' || state.permission === 'limited';
+  const cameraAllowed = state.permission === 'granted' || state.permission === 'limited';
 
   return (
     <Box flex={1} background="background">
@@ -86,10 +75,7 @@ export function ScannerScreen({ navigation }: ScannerScreenProps): React.JSX.Ele
             />
             <View
               pointerEvents="none"
-              style={[
-                styles.overlay,
-                { borderColor: theme.colors.brand.primary },
-              ]}
+              style={[styles.overlay, { borderColor: theme.colors.brand.primary }]}
               accessibilityElementsHidden
             />
           </View>
@@ -100,10 +86,7 @@ export function ScannerScreen({ navigation }: ScannerScreenProps): React.JSX.Ele
               {t('scanner.useManual')}
             </Text>
             {state.permission === 'denied' || state.permission === 'loading' ? (
-              <Button
-                label={t('scanner.allowCamera')}
-                onPress={state.requestPermission}
-              />
+              <Button label={t('scanner.allowCamera')} onPress={state.requestPermission} />
             ) : null}
             {state.permission === 'blocked' ? (
               <Button

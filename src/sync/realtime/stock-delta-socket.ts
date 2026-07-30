@@ -118,10 +118,7 @@ export class StockDeltaSocket {
       return;
     }
 
-    const envelope = z
-      .object({ type: z.string() })
-      .passthrough()
-      .safeParse(json);
+    const envelope = z.object({ type: z.string() }).passthrough().safeParse(json);
     if (!envelope.success || envelope.data.type !== 'stock.balance.updated') {
       return;
     }

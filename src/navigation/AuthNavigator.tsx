@@ -19,11 +19,7 @@ export function AuthNavigator(): React.JSX.Element {
         contentStyle: { backgroundColor: theme.colors.surface.background },
       }}
     >
-      <Stack.Screen
-        name={Routes.Login}
-        component={LoginScreen}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name={Routes.Login} component={LoginScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

@@ -5,11 +5,7 @@ import {
   type GestureResponderEvent,
   type ViewStyle,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
@@ -64,13 +60,15 @@ export function Button({
     danger: theme.colors.status.danger,
   };
 
-  const labelColor: Record<NonNullable<ButtonProps['variant']>, 'onBrand' | 'primary' | 'inverse'> =
-    {
-      primary: 'onBrand',
-      secondary: 'primary',
-      ghost: 'primary',
-      danger: 'inverse',
-    };
+  const labelColor: Record<
+    NonNullable<ButtonProps['variant']>,
+    'onBrand' | 'primary' | 'inverse'
+  > = {
+    primary: 'onBrand',
+    secondary: 'primary',
+    ghost: 'primary',
+    danger: 'inverse',
+  };
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

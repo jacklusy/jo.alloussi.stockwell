@@ -43,7 +43,11 @@ describe('pushQueueItem', () => {
       { err: new Error('boom'), kind: 'retry' },
     ];
     for (const c of cases) {
-      const client = { post: jest.fn(async () => { throw c.err; }) };
+      const client = {
+        post: jest.fn(async () => {
+          throw c.err;
+        }),
+      };
       const result = await pushQueueItem(client as never, item);
       expect(result.kind).toBe(c.kind);
     }

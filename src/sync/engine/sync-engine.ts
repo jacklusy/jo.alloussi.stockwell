@@ -233,10 +233,7 @@ export class SyncEngine {
     return true;
   }
 
-  private async applyAuthoritativeBalance(
-    balanceId: string,
-    serverVersion: number,
-  ): Promise<void> {
+  private async applyAuthoritativeBalance(balanceId: string, serverVersion: number): Promise<void> {
     await this.deps.db.execute(
       `UPDATE stock_balances
        SET version = ?, pending_sync = 0, updated_at = ?

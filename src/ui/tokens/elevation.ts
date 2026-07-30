@@ -4,7 +4,13 @@ export type ElevationLevel = 'flat' | 'raised' | 'overlay' | 'sticky';
 
 type ElevationStyle = Pick<
   ViewStyle,
-  'elevation' | 'shadowColor' | 'shadowOffset' | 'shadowOpacity' | 'shadowRadius' | 'borderWidth' | 'borderColor'
+  | 'elevation'
+  | 'shadowColor'
+  | 'shadowOffset'
+  | 'shadowOpacity'
+  | 'shadowRadius'
+  | 'borderWidth'
+  | 'borderColor'
 >;
 
 const lightShadows: Record<ElevationLevel, ElevationStyle> = {

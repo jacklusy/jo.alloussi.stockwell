@@ -1,6 +1,1 @@
-export {
-  initCrashReporting,
-  captureUnexpectedError,
-  scrubSentryEvent,
-  Sentry,
-} from './sentry';
+export { initCrashReporting, captureUnexpectedError, scrubSentryEvent, Sentry } from './sentry';

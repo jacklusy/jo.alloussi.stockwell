@@ -18,12 +18,7 @@ export type SkeletonProps = {
   testID?: string;
 };
 
-export function Skeleton({
-  width,
-  height,
-  radius,
-  testID,
-}: SkeletonProps): React.JSX.Element {
+export function Skeleton({ width, height, radius, testID }: SkeletonProps): React.JSX.Element {
   const theme = useTheme();
   const opacity = useSharedValue(0.4);
   const reduceMotion = useSharedValue(false);

@@ -1,11 +1,7 @@
 import type { DB } from '@op-engineering/op-sqlite';
 
 import { createId } from '@/core/utils/id';
-import type {
-  MutationType,
-  QueueItem,
-  QueueItemStatus,
-} from '@/sync/types';
+import type { MutationType, QueueItem, QueueItemStatus } from '@/sync/types';
 
 export type EnqueueInput = {
   type: MutationType;
@@ -62,15 +58,7 @@ export class MutationQueue {
          id, idempotency_key, type, payload, entity_id, base_version,
          status, attempts, next_attempt_at, last_error, created_at
        ) VALUES (?, ?, ?, ?, ?, ?, 'PENDING', 0, NULL, NULL, ?)`,
-      [
-        id,
-        idempotencyKey,
-        input.type,
-        input.payload,
-        input.entityId,
-        input.baseVersion,
-        createdAt,
-      ],
+      [id, idempotencyKey, input.type, input.payload, input.entityId, input.baseVersion, createdAt],
     );
     return {
       id,
@@ -102,10 +90,7 @@ export class MutationQueue {
   }
 
   async markInFlight(id: string): Promise<void> {
-    await this.db.execute(
-      `UPDATE mutation_queue SET status = 'IN_FLIGHT' WHERE id = ?`,
-      [id],
-    );
+    await this.db.execute(`UPDATE mutation_queue SET status = 'IN_FLIGHT' WHERE id = ?`, [id]);
   }
 
   async markPending(id: string): Promise<void> {
@@ -197,10 +182,7 @@ export class MutationQueue {
   }
 
   async getById(id: string): Promise<QueueItem | null> {
-    const result = await this.db.execute(
-      `SELECT * FROM mutation_queue WHERE id = ? LIMIT 1`,
-      [id],
-    );
+    const result = await this.db.execute(`SELECT * FROM mutation_queue WHERE id = ? LIMIT 1`, [id]);
     const row = result.rows[0] as QueueRow | undefined;
     return row ? mapRow(row) : null;
   }

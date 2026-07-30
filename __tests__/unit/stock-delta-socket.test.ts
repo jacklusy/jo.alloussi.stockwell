@@ -91,9 +91,9 @@ describe('StockDeltaSocket', () => {
     );
     await Promise.resolve();
     await Promise.resolve();
-    const row = (
-      await db.execute(`SELECT * FROM stock_balances WHERE id = ?`, ['b1'])
-    ).rows[0] as { on_hand: number };
+    const row = (await db.execute(`SELECT * FROM stock_balances WHERE id = ?`, ['b1'])).rows[0] as {
+      on_hand: number;
+    };
     expect(row.on_hand).toBe(8);
     expect(onReconnect).not.toHaveBeenCalled();
   });

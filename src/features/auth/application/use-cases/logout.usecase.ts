@@ -22,11 +22,7 @@ export function createLogoutUseCase(deps: {
     async execute(input = {}) {
       const counts = await deps.queue.countByStatus();
       const pending =
-        counts.PENDING +
-        counts.IN_FLIGHT +
-        counts.FAILED +
-        counts.CONFLICT +
-        counts.DEAD;
+        counts.PENDING + counts.IN_FLIGHT + counts.FAILED + counts.CONFLICT + counts.DEAD;
       if (pending > 0 && !input.confirmQueueDiscard) {
         return Result.err(
           new ValidationError(

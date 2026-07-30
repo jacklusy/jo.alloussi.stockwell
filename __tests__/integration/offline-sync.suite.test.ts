@@ -104,29 +104,35 @@ function createTrackingClient(opts?: {
     get posts() {
       return state.posts;
     },
-    post: jest.fn(async (_url: string, _body: unknown, config?: {
-      headers?: Record<string, unknown>;
-      idempotencyKey?: string;
-    }) => {
-      state.posts += 1;
-      const key = String(
-        config?.idempotencyKey ??
-          config?.headers?.['Idempotency-Key'] ??
-          config?.headers?.['idempotency-key'] ??
-          '',
-      );
-      if (opts?.onAdjust) {
-        const data = await opts.onAdjust({
-          ...(config?.headers ?? {}),
-          'Idempotency-Key': key,
-        });
-        return { data };
-      }
-      if (key && !movements.includes(key)) {
-        movements.push(key);
-      }
-      return { data: { version: 8, movement_id: `m-${key}` } };
-    }),
+    post: jest.fn(
+      async (
+        _url: string,
+        _body: unknown,
+        config?: {
+          headers?: Record<string, unknown>;
+          idempotencyKey?: string;
+        },
+      ) => {
+        state.posts += 1;
+        const key = String(
+          config?.idempotencyKey ??
+            config?.headers?.['Idempotency-Key'] ??
+            config?.headers?.['idempotency-key'] ??
+            '',
+        );
+        if (opts?.onAdjust) {
+          const data = await opts.onAdjust({
+            ...(config?.headers ?? {}),
+            'Idempotency-Key': key,
+          });
+          return { data };
+        }
+        if (key && !movements.includes(key)) {
+          movements.push(key);
+        }
+        return { data: { version: 8, movement_id: `m-${key}` } };
+      },
+    ),
     get: jest.fn(async () => ({
       data: { data: [], meta: { page: 1, limit: 200, total: 0, totalPages: 1 } },
     })),

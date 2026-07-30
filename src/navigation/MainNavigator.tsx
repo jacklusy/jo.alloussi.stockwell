@@ -96,9 +96,7 @@ function TabsNavigator(): React.JSX.Element {
   const theme = useTheme();
   const syncStatus = useSyncStatusStore((s) => s.status);
   const syncBadge =
-    syncStatus.kind === 'pending' ||
-    syncStatus.kind === 'failed' ||
-    syncStatus.kind === 'conflict'
+    syncStatus.kind === 'pending' || syncStatus.kind === 'failed' || syncStatus.kind === 'conflict'
       ? syncStatus.count
       : null;
 

@@ -33,10 +33,7 @@ export function registerDependencies(target: Container = container): void {
   const authRepo = createAuthRepository(apiClient);
   target.registerInstance(TOKENS.AUTH_REPOSITORY, authRepo);
   target.registerInstance(TOKENS.LOGIN_USE_CASE, createLoginUseCase(authRepo));
-  target.registerInstance(
-    TOKENS.BIOMETRIC_UNLOCK_USE_CASE,
-    createBiometricUnlockUseCase(authRepo),
-  );
+  target.registerInstance(TOKENS.BIOMETRIC_UNLOCK_USE_CASE, createBiometricUnlockUseCase(authRepo));
 
   refreshCoordinator.configure(async (refreshToken) => {
     const result = await authRepo.refresh(refreshToken);
@@ -53,9 +50,7 @@ export function registerDependencies(target: Container = container): void {
   target.register(TOKENS.STOCK_BALANCE_REPOSITORY, () =>
     createStockBalanceRepository(getRawDatabase()),
   );
-  target.register(TOKENS.WAREHOUSE_REPOSITORY, () =>
-    createWarehouseRepository(getRawDatabase()),
-  );
+  target.register(TOKENS.WAREHOUSE_REPOSITORY, () => createWarehouseRepository(getRawDatabase()));
 
   target.register(TOKENS.MUTATION_QUEUE, () => new MutationQueue(getRawDatabase()));
   target.register(

@@ -10,12 +10,12 @@ Authoritative rules: skill file 1 (layers / DI) · skill file 2 (TS / RN) · ski
 Presentation → Application → Domain ← Data / Infrastructure
 ```
 
-| Layer | May import | Must not import |
-|---|---|---|
-| Domain | Pure TS only | React, RN, axios, DB |
-| Application | Domain | React / RN (prefer) |
+| Layer        | May import                       | Must not import              |
+| ------------ | -------------------------------- | ---------------------------- |
+| Domain       | Pure TS only                     | React, RN, axios, DB         |
+| Application  | Domain                           | React / RN (prefer)          |
 | Presentation | Application, Domain types, `ui/` | `data/`, `storage/`, `sync/` |
-| `sync/` | Domain, infrastructure | Presentation |
+| `sync/`      | Domain, infrastructure           | Presentation                 |
 
 `sync/` is top-level (ADR-M002). `ui/` is domain-agnostic.
 

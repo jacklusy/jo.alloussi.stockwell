@@ -23,9 +23,7 @@ export function createLoginUseCase(authRepository: AuthRepository): LoginUseCase
     async execute(credentials) {
       const online = await networkAdapter.isOnline();
       if (!online) {
-        return Result.err(
-          new OfflineError('You need a connection to sign in the first time'),
-        );
+        return Result.err(new OfflineError('You need a connection to sign in the first time'));
       }
 
       const result = await authRepository.login(credentials);

@@ -2,12 +2,7 @@ import type { AxiosInstance } from 'axios';
 
 import { SyncEngine } from '@/sync/engine/sync-engine';
 import { MutationQueue } from '@/sync/queue/mutation-queue';
-import {
-  AuthError,
-  ConflictError,
-  RateLimitError,
-  ValidationError,
-} from '@/core/errors';
+import { AuthError, ConflictError, RateLimitError, ValidationError } from '@/core/errors';
 import { createSyncMemoryDb } from '../helpers/sync-memory-db';
 import { networkAdapter } from '@/services/network/netinfo';
 import { refreshCoordinator } from '@/services/auth/refresh-coordinator';

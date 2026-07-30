@@ -8,15 +8,9 @@ import {
   type PermissionStatus,
 } from 'react-native-permissions';
 
-export type CameraPermissionState =
-  | 'granted'
-  | 'denied'
-  | 'blocked'
-  | 'unavailable'
-  | 'limited';
+export type CameraPermissionState = 'granted' | 'denied' | 'blocked' | 'unavailable' | 'limited';
 
-const CAMERA =
-  Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA;
+const CAMERA = Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA;
 
 function mapStatus(status: PermissionStatus): CameraPermissionState {
   switch (status) {

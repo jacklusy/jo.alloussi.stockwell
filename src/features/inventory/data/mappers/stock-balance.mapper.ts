@@ -1,12 +1,6 @@
 import type { StockBalance } from '@/features/inventory/domain/entities/stock-balance';
 import type { StockBalanceDto } from '@/features/inventory/data/dto/stock-balance.dto';
-import {
-  asBalanceId,
-  asLocationId,
-  asProductId,
-  asTenantId,
-  asWarehouseId,
-} from '@/types/ids';
+import { asBalanceId, asLocationId, asProductId, asTenantId, asWarehouseId } from '@/types/ids';
 
 export type StockBalanceRow = {
   id: string;

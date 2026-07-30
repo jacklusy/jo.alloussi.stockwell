@@ -11,9 +11,7 @@ export type LookupSkuUseCase = {
   }) => Promise<Result<StockBalance, AppError>>;
 };
 
-export function createLookupSkuUseCase(
-  balances: StockBalanceRepository,
-): LookupSkuUseCase {
+export function createLookupSkuUseCase(balances: StockBalanceRepository): LookupSkuUseCase {
   return {
     async execute({ warehouseId, sku }) {
       const trimmed = sku.trim();

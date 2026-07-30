@@ -7,19 +7,12 @@ import {
   RateLimitError,
   ValidationError,
 } from '@/core/errors';
-import {
-  adjustStockPayloadSchema,
-  type PushResult,
-  type QueueItem,
-} from '@/sync/types';
+import { adjustStockPayloadSchema, type PushResult, type QueueItem } from '@/sync/types';
 
 /**
  * Push a single queue item. Never regenerates the idempotency key.
  */
-export async function pushQueueItem(
-  client: AxiosInstance,
-  item: QueueItem,
-): Promise<PushResult> {
+export async function pushQueueItem(client: AxiosInstance, item: QueueItem): Promise<PushResult> {
   try {
     if (item.type === 'ADJUST_STOCK') {
       const payload = adjustStockPayloadSchema.parse(JSON.parse(item.payload));

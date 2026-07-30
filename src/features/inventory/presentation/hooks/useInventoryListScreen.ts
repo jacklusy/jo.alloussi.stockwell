@@ -109,8 +109,7 @@ export function useInventoryListScreen(): InventoryListViewState {
     }
   }, [fetchPage]);
 
-  const isOffline =
-    !networkStatus.isConnected || networkStatus.isInternetReachable === false;
+  const isOffline = !networkStatus.isConnected || networkStatus.isInternetReachable === false;
 
   return {
     items,

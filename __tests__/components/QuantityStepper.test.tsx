@@ -22,9 +22,7 @@ describe('QuantityStepper', () => {
 
   it('respects disabled', () => {
     const onChange = jest.fn();
-    const { getByLabelText } = wrap(
-      <QuantityStepper value={5} onChange={onChange} disabled />,
-    );
+    const { getByLabelText } = wrap(<QuantityStepper value={5} onChange={onChange} disabled />);
     fireEvent.press(getByLabelText('Increase by one'));
     expect(onChange).not.toHaveBeenCalled();
   });

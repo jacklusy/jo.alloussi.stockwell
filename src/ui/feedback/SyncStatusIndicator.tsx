@@ -105,12 +105,12 @@ export function SyncStatusIndicator({
     status.kind === 'failed'
       ? theme.colors.sync.failed
       : status.kind === 'conflict'
-        ? theme.colors.sync.conflict
-        : status.kind === 'pending'
-          ? theme.colors.sync.pending
-          : status.kind === 'syncing'
-            ? theme.colors.sync.syncing
-            : theme.colors.sync.synced;
+      ? theme.colors.sync.conflict
+      : status.kind === 'pending'
+      ? theme.colors.sync.pending
+      : status.kind === 'syncing'
+      ? theme.colors.sync.syncing
+      : theme.colors.sync.synced;
 
   const content = (
     <Box
@@ -137,12 +137,7 @@ export function SyncStatusIndicator({
   }
 
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      hitSlop={8}
-    >
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} hitSlop={8}>
       {content}
     </Pressable>
   );

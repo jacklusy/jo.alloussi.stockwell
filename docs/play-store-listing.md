@@ -20,7 +20,7 @@ Features:
 • Sync centre for pending, failed, and conflicted work  
 • Barcode scan with manual SKU fallback  
 • Biometric unlock for returning sessions  
-• Light and dark themes tuned for warehouse lighting  
+• Light and dark themes tuned for warehouse lighting
 
 Demo account credentials are in the review notes.
 
@@ -37,12 +37,12 @@ Demo account credentials are in the review notes.
 
 ## Data safety (MVP)
 
-| Data | Collected | Shared | Purpose |
-|---|---|---|---|
-| Account credentials | Yes (auth API) | With backend only | Sign-in |
-| Device identifiers | Via Sentry (crash) | Sentry | Stability |
-| Approximate location | No | — | — |
-| Analytics / ads | No | — | Cut from MVP |
+| Data                 | Collected          | Shared            | Purpose      |
+| -------------------- | ------------------ | ----------------- | ------------ |
+| Account credentials  | Yes (auth API)     | With backend only | Sign-in      |
+| Device identifiers   | Via Sentry (crash) | Sentry            | Stability    |
+| Approximate location | No                 | —                 | —            |
+| Analytics / ads      | No                 | —                 | Cut from MVP |
 
 ## Review notes template
 

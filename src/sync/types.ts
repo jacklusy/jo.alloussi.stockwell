@@ -1,12 +1,6 @@
 import { z } from 'zod';
 
-export type SyncEngineState =
-  | 'IDLE'
-  | 'PUSHING'
-  | 'PULLING'
-  | 'RESOLVING'
-  | 'ERROR'
-  | 'OFFLINE';
+export type SyncEngineState = 'IDLE' | 'PUSHING' | 'PULLING' | 'RESOLVING' | 'ERROR' | 'OFFLINE';
 
 export type QueueItemStatus = 'PENDING' | 'IN_FLIGHT' | 'FAILED' | 'CONFLICT' | 'DEAD';
 

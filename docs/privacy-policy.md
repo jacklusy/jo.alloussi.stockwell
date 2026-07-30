@@ -34,9 +34,9 @@ Stockwell is a mobile inventory client for warehouse operators. It talks to your
 
 ## Permissions
 
-- **Internet** — sync with the API  
-- **Camera** — optional barcode scanning; you can always enter a SKU manually  
-- **Biometrics** — optional unlock of stored credentials on this device  
+- **Internet** — sync with the API
+- **Camera** — optional barcode scanning; you can always enter a SKU manually
+- **Biometrics** — optional unlock of stored credentials on this device
 
 ## Retention
 

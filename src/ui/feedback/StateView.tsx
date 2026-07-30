@@ -39,8 +39,8 @@ export function StateView({
     kind === 'error' || kind === 'permission-denied'
       ? theme.colors.status.danger
       : kind === 'offline'
-        ? theme.colors.status.warning
-        : theme.colors.text.tertiary;
+      ? theme.colors.status.warning
+      : theme.colors.text.tertiary;
 
   return (
     <Box

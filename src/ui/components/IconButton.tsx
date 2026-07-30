@@ -1,10 +1,6 @@
 import React, { useCallback } from 'react';
 import { Pressable, type GestureResponderEvent, type ViewStyle } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { useTheme } from '@/ui/theme';
 

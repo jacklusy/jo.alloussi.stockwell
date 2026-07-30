@@ -5,10 +5,7 @@ import type { StockBalanceRepository } from '@/features/inventory/domain/reposit
 import { networkAdapter } from '@/services/network/netinfo';
 import { MutationQueue } from '@/sync/queue/mutation-queue';
 import type { SyncEngine } from '@/sync/engine/sync-engine';
-import {
-  adjustStockPayloadSchema,
-  type AdjustStockPayload,
-} from '@/sync/types';
+import { adjustStockPayloadSchema, type AdjustStockPayload } from '@/sync/types';
 import type { BalanceId } from '@/types/ids';
 
 export type AdjustStockInput = {
@@ -67,10 +64,7 @@ export function createAdjustStockUseCase(deps: AdjustStockDeps): AdjustStockUseC
         );
       }
 
-      const optimistic = await deps.balances.applyOptimisticDelta(
-        input.balanceId,
-        input.delta,
-      );
+      const optimistic = await deps.balances.applyOptimisticDelta(input.balanceId, input.delta);
       if (!optimistic.ok) {
         return optimistic;
       }

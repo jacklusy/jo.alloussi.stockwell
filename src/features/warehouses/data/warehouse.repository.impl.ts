@@ -12,9 +12,7 @@ export function createWarehouseRepository(raw: DB): WarehouseRepository {
   return {
     async list(): Promise<Result<Warehouse[], AppError>> {
       try {
-        const result = await raw.execute(
-          'SELECT id, name, code FROM warehouses ORDER BY name ASC',
-        );
+        const result = await raw.execute('SELECT id, name, code FROM warehouses ORDER BY name ASC');
         const items = (result.rows as Array<{ id: string; name: string; code: string }>).map(
           (row) => ({
             id: asWarehouseId(row.id),

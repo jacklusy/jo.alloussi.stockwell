@@ -35,8 +35,7 @@ function parseServerState(raw: string): ServerConflictState {
     throw new Error('Missing server version');
   }
   const onHandRaw = record.on_hand ?? record.onHand;
-  const onHand =
-    typeof onHandRaw === 'number' && Number.isFinite(onHandRaw) ? onHandRaw : null;
+  const onHand = typeof onHandRaw === 'number' && Number.isFinite(onHandRaw) ? onHandRaw : null;
   return { version, onHand };
 }
 
@@ -101,9 +100,7 @@ export function createResolveConflictUseCase(deps: {
             return Result.err(new ValidationError('Quantity must be non-negative'));
           }
           if (serverState.onHand === null) {
-            return Result.err(
-              new ValidationError('Server on-hand unknown — cannot compute delta'),
-            );
+            return Result.err(new ValidationError('Server on-hand unknown — cannot compute delta'));
           }
           const previous = adjustStockPayloadSchema.parse(JSON.parse(item.payload));
           const delta = action.onHand - serverState.onHand;

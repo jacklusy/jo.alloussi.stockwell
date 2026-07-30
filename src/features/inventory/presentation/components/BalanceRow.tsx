@@ -19,9 +19,7 @@ function BalanceRowComponent({ item, onPress }: BalanceRowProps): React.JSX.Elem
     <ListRow
       title={item.title}
       subtitle={item.subtitle}
-      syncRailColor={
-        item.pendingSync ? theme.colors.sync.pending : theme.colors.sync.synced
-      }
+      syncRailColor={item.pendingSync ? theme.colors.sync.pending : theme.colors.sync.synced}
       accessibilityLabel={item.accessibilityLabel}
       chevron
       onPress={() => onPress(item.id)}

@@ -53,13 +53,7 @@ export function AdjustStockScreen({ route }: AdjustStockScreenProps): React.JSX.
           <Text variant="body" color="secondary">
             {state.sku} · {state.productName}
           </Text>
-          <Box
-            padding={4}
-            radius="md"
-            background="surfaceRaised"
-            border="subtle"
-            gap={2}
-          >
+          <Box padding={4} radius="md" background="surfaceRaised" border="subtle" gap={2}>
             <Text variant="overline" color="secondary">
               {t('inventory.onHand')}
             </Text>

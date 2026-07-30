@@ -2,10 +2,7 @@ import { createLookupSkuUseCase } from '@/features/inventory/application/use-cas
 import { Result } from '@/core/domain';
 import type { StockBalanceRepository } from '@/features/inventory/domain/repositories/stock-balance.repository';
 import { asBalanceId, asLocationId, asProductId, asTenantId, asWarehouseId } from '@/types/ids';
-import {
-  checkCameraPermission,
-  requestCameraPermission,
-} from '@/services/permissions/camera';
+import { checkCameraPermission, requestCameraPermission } from '@/services/permissions/camera';
 import { check, request, RESULTS } from 'react-native-permissions';
 
 const balance = {

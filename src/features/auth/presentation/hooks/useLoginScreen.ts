@@ -5,9 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { container, TOKENS } from '@/core/di';
 import type { LoginUseCase } from '@/features/auth/application/use-cases/login.usecase';
-import {
-  readBiometricPreference,
-} from '@/features/auth/application/use-cases/login.usecase';
+import { readBiometricPreference } from '@/features/auth/application/use-cases/login.usecase';
 import type { BiometricUnlockUseCase } from '@/features/auth/application/use-cases/biometric-unlock.usecase';
 import { OfflineError } from '@/core/errors';
 
@@ -63,9 +61,7 @@ export function useLoginScreen(): LoginViewState {
     setIsSubmitting(true);
     setErrorMessage(null);
     try {
-      const useCase = container.resolve<BiometricUnlockUseCase>(
-        TOKENS.BIOMETRIC_UNLOCK_USE_CASE,
-      );
+      const useCase = container.resolve<BiometricUnlockUseCase>(TOKENS.BIOMETRIC_UNLOCK_USE_CASE);
       const result = await useCase.execute();
       if (!result.ok) {
         setErrorMessage(result.error.userMessage);

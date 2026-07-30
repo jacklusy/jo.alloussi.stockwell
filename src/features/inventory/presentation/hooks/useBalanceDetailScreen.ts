@@ -71,9 +71,7 @@ export function useBalanceDetailScreen(balanceId: string): BalanceDetailViewStat
     availableLabel: available === null ? '—' : String(available),
     pendingSync,
     accessibilityQuantity:
-      onHand === null
-        ? t('inventory.detailLoading')
-        : `${t('inventory.onHand')}: ${onHand}`,
+      onHand === null ? t('inventory.detailLoading') : `${t('inventory.onHand')}: ${onHand}`,
     refresh: () => setTick((n) => n + 1),
   };
 }

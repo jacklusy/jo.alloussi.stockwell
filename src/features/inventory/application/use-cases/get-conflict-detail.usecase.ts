@@ -52,8 +52,7 @@ export function createGetConflictDetailUseCase(deps: {
           on_hand?: number;
           onHand?: number;
         };
-        serverVersion =
-          typeof server.version === 'number' ? server.version : null;
+        serverVersion = typeof server.version === 'number' ? server.version : null;
         const onHand = server.on_hand ?? server.onHand;
         serverOnHand = typeof onHand === 'number' ? onHand : null;
         serverSummary = `version ${serverVersion ?? '?'}${

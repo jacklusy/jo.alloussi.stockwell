@@ -53,9 +53,7 @@ export function useConflictResolutionScreen(
     (action: ConflictResolutionAction) => {
       setIsSubmitting(true);
       setErrorMessage(null);
-      const useCase = container.resolve<ResolveConflictUseCase>(
-        TOKENS.RESOLVE_CONFLICT_USE_CASE,
-      );
+      const useCase = container.resolve<ResolveConflictUseCase>(TOKENS.RESOLVE_CONFLICT_USE_CASE);
       void useCase.execute(queueItemId, action).then((result) => {
         setIsSubmitting(false);
         if (!result.ok) {

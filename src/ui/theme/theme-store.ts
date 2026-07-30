@@ -1,10 +1,7 @@
 import { create } from 'zustand';
 
 import type { ThemePreference } from '@/ui/theme/theme';
-import {
-  readThemePreference,
-  writeThemePreference,
-} from '@/ui/theme/theme-persistence';
+import { readThemePreference, writeThemePreference } from '@/ui/theme/theme-persistence';
 
 type ThemeSlice = {
   preference: ThemePreference;

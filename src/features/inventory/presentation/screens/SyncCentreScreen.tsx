@@ -65,8 +65,8 @@ export function SyncCentreScreen(): React.JSX.Element {
         item.section === 'CONFLICT'
           ? theme.colors.sync.conflict
           : item.section === 'DEAD' || item.section === 'FAILED'
-            ? theme.colors.sync.failed
-            : theme.colors.sync.pending;
+          ? theme.colors.sync.failed
+          : theme.colors.sync.pending;
 
       return (
         <Box gap={2} paddingBottom={2}>
@@ -75,9 +75,7 @@ export function SyncCentreScreen(): React.JSX.Element {
             subtitle={item.lastError ?? `${item.type} · attempts ${item.attempts}`}
             syncRailColor={rail}
             accessibilityLabel={`${item.summary}, ${item.section}`}
-            {...(item.section === 'CONFLICT'
-              ? { onPress: () => state.openConflict(item.id) }
-              : {})}
+            {...(item.section === 'CONFLICT' ? { onPress: () => state.openConflict(item.id) } : {})}
           />
           <Box row gap={2} paddingX={4}>
             {item.section === 'CONFLICT' ? (
@@ -116,11 +114,7 @@ export function SyncCentreScreen(): React.JSX.Element {
   if (state.isEmpty) {
     return (
       <Box flex={1} background="background">
-        <StateView
-          kind="empty"
-          headline={t('sync.emptyHeadline')}
-          body={t('sync.emptyBody')}
-        />
+        <StateView kind="empty" headline={t('sync.emptyHeadline')} body={t('sync.emptyBody')} />
       </Box>
     );
   }

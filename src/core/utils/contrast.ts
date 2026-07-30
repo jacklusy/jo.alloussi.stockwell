@@ -32,10 +32,6 @@ export function contrastRatio(foreground: string, background: string): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-export function meetsContrast(
-  foreground: string,
-  background: string,
-  minRatio: number,
-): boolean {
+export function meetsContrast(foreground: string, background: string, minRatio: number): boolean {
   return contrastRatio(foreground, background) >= minRatio;
 }

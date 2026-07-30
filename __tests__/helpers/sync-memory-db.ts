@@ -147,8 +147,7 @@ export function createSyncMemoryDb(): DB {
         return {
           rows: [
             {
-              c: queue.filter((r) => r.entity_id === entityId && active.has(r.status))
-                .length,
+              c: queue.filter((r) => r.entity_id === entityId && active.has(r.status)).length,
             },
           ],
         };
@@ -180,7 +179,7 @@ export function createSyncMemoryDb(): DB {
         return { rows: [...queue] };
       }
 
-      if (q.startsWith('UPDATE mutation_queue SET status = \'IN_FLIGHT\'')) {
+      if (q.startsWith("UPDATE mutation_queue SET status = 'IN_FLIGHT'")) {
         const id = params[0] as string;
         const row = queue.find((r) => r.id === id);
         if (row) {
@@ -189,7 +188,7 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.startsWith('UPDATE mutation_queue SET status = \'PENDING\', next_attempt_at')) {
+      if (q.startsWith("UPDATE mutation_queue SET status = 'PENDING', next_attempt_at")) {
         const id = params[0] as string;
         const row = queue.find((r) => r.id === id);
         if (row) {
@@ -199,7 +198,7 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.startsWith('UPDATE mutation_queue SET status = \'PENDING\' WHERE status = \'IN_FLIGHT\'')) {
+      if (q.startsWith("UPDATE mutation_queue SET status = 'PENDING' WHERE status = 'IN_FLIGHT'")) {
         for (const row of queue) {
           if (row.status === 'IN_FLIGHT') {
             row.status = 'PENDING';
@@ -208,13 +207,8 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.includes('SET status = \'FAILED\'')) {
-        const [attempts, nextAttemptAt, lastError, id] = params as [
-          number,
-          number,
-          string,
-          string,
-        ];
+      if (q.includes("SET status = 'FAILED'")) {
+        const [attempts, nextAttemptAt, lastError, id] = params as [number, number, string, string];
         const row = queue.find((r) => r.id === id);
         if (row) {
           row.status = 'FAILED';
@@ -225,7 +219,7 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.includes('SET status = \'CONFLICT\'')) {
+      if (q.includes("SET status = 'CONFLICT'")) {
         const [lastError, id] = params as [string, string];
         const row = queue.find((r) => r.id === id);
         if (row) {
@@ -235,7 +229,7 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.includes('SET status = \'DEAD\'')) {
+      if (q.includes("SET status = 'DEAD'")) {
         const [lastError, id] = params as [string, string];
         const row = queue.find((r) => r.id === id);
         if (row) {
@@ -256,7 +250,10 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.startsWith('INSERT OR REPLACE INTO conflicts') || q.startsWith('INSERT INTO conflicts')) {
+      if (
+        q.startsWith('INSERT OR REPLACE INTO conflicts') ||
+        q.startsWith('INSERT INTO conflicts')
+      ) {
         const [queueItemId, localPayload, serverState, detectedAt] = params as [
           string,
           string,
@@ -323,7 +320,10 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.startsWith('INSERT INTO stock_balances') || q.startsWith('INSERT OR REPLACE INTO stock_balances')) {
+      if (
+        q.startsWith('INSERT INTO stock_balances') ||
+        q.startsWith('INSERT OR REPLACE INTO stock_balances')
+      ) {
         balances.push({
           id: params[0] as string,
           tenant_id: (params[1] as string) ?? 't1',

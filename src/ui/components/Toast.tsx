@@ -8,10 +8,7 @@ import React, {
   type PropsWithChildren,
 } from 'react';
 import { Pressable } from 'react-native';
-import Animated, {
-  FadeInUp,
-  FadeOutUp,
-} from 'react-native-reanimated';
+import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Box } from '@/ui/primitives/Box';

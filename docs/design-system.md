@@ -19,12 +19,12 @@ Every inventory row carries a **4 dp vertical rail** on the leading edge whose c
 
 Would a generic "inventory app" prompt land here?
 
-| Default AI look | This system |
-|---|---|
-| Cream `#F4F1EA` + terracotta `#D97757` | Cool slate with teal undertone; amber safety accent |
-| Purple-on-white SaaS | No purple anywhere |
-| Soft grey cards, `#3B82F6` primary | No floating card chrome as brand; amber primary; edge rail as identity |
-| Decorative gradients | Flat industrial surfaces; elevation via border (dark) or shadow (light) |
+| Default AI look                        | This system                                                             |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| Cream `#F4F1EA` + terracotta `#D97757` | Cool slate with teal undertone; amber safety accent                     |
+| Purple-on-white SaaS                   | No purple anywhere                                                      |
+| Soft grey cards, `#3B82F6` primary     | No floating card chrome as brand; amber primary; edge rail as identity  |
+| Decorative gradients                   | Flat industrial surfaces; elevation via border (dark) or shadow (light) |
 
 A generic prompt produces cards, blue CTAs, and Inter-for-aesthetics. We use Inter for **tabular figures and slashed zero**, JetBrains Mono for quantities, and the edge rail as the memorable device. The look should feel like a **handheld scanner UI**, not a SaaS console.
 
@@ -34,14 +34,14 @@ A generic prompt produces cards, blue CTAs, and Inter-for-aesthetics. We use Int
 
 Semantic names only — components never reference hex literals.
 
-| Group | Tokens |
-|---|---|
-| `brand` | `primary`, `primaryPressed`, `primarySubtle`, `onPrimary` |
+| Group     | Tokens                                                    |
+| --------- | --------------------------------------------------------- |
+| `brand`   | `primary`, `primaryPressed`, `primarySubtle`, `onPrimary` |
 | `surface` | `background`, `surface`, `surfaceRaised`, `surfaceSunken` |
-| `text` | `primary`, `secondary`, `tertiary`, `inverse`, `onBrand` |
-| `border` | `subtle`, `default`, `strong`, `focus` |
-| `status` | `success`, `warning`, `danger`, `info` (+ `*Subtle`) |
-| `sync` | `pending`, `syncing`, `synced`, `failed`, `conflict` |
+| `text`    | `primary`, `secondary`, `tertiary`, `inverse`, `onBrand`  |
+| `border`  | `subtle`, `default`, `strong`, `focus`                    |
+| `status`  | `success`, `warning`, `danger`, `info` (+ `*Subtle`)      |
+| `sync`    | `pending`, `syncing`, `synced`, `failed`, `conflict`      |
 
 **Contrast targets (both themes, verified in `scripts/verify-contrast.ts`):** body ≥ 4.5:1 · large text ≥ 3:1 · UI/borders ≥ 3:1 · focus ≥ 3:1.
 
@@ -51,10 +51,10 @@ Semantic names only — components never reference hex literals.
 
 ## 3. Typography
 
-| Family | Role | Why |
-|---|---|---|
-| **Inter** | Body / UI | Tabular figures, slashed zero, legible at 12–14 pt on low-DPI screens |
-| **JetBrains Mono** | Quantities, SKUs, deltas | Fixed-width digits — scrolling lists do not jitter as values change |
+| Family             | Role                     | Why                                                                   |
+| ------------------ | ------------------------ | --------------------------------------------------------------------- |
+| **Inter**          | Body / UI                | Tabular figures, slashed zero, legible at 12–14 pt on low-DPI screens |
+| **JetBrains Mono** | Quantities, SKUs, deltas | Fixed-width digits — scrolling lists do not jitter as values change   |
 
 Maximum 2 families / 5 weights: Inter 400/500/600/700, JetBrains Mono 500/700.
 

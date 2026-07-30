@@ -1,6 +1,9 @@
 import { Result } from '@/core/domain';
 import { AuthError, type AppError } from '@/core/errors';
-import type { AuthRepository, AuthSession } from '@/features/auth/domain/repositories/auth.repository';
+import type {
+  AuthRepository,
+  AuthSession,
+} from '@/features/auth/domain/repositories/auth.repository';
 import { useSessionStore } from '@/services/auth/session-store';
 import { loadTokens, saveTokens } from '@/storage/secure/keychain';
 import { readBiometricPreference } from '@/features/auth/application/use-cases/login.usecase';

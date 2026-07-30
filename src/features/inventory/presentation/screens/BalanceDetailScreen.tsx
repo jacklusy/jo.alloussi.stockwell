@@ -72,9 +72,7 @@ export function BalanceDetailScreen({
               <Badge
                 label={t('inventory.pendingBadge')}
                 variant="sync-pending"
-                icon={
-                  <Icon name="pending" size={12} color={theme.colors.sync.pending} />
-                }
+                icon={<Icon name="pending" size={12} color={theme.colors.sync.pending} />}
               />
             ) : null}
           </Box>

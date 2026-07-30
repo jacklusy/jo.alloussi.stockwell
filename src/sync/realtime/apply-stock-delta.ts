@@ -27,9 +27,7 @@ export async function applyOrBufferStockDelta(
 }
 
 /** Attempt to apply every buffered delta whose entity is now queue-clear. */
-export async function flushBufferedStockDeltas(
-  deps: ApplyStockDeltaDeps,
-): Promise<number> {
+export async function flushBufferedStockDeltas(deps: ApplyStockDeltaDeps): Promise<number> {
   let applied = 0;
   for (const delta of deps.buffer.entries()) {
     if (await deps.queue.hasPendingForEntity(delta.balanceId)) {

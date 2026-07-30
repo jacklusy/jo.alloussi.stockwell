@@ -28,9 +28,10 @@ describe('applyOrBufferStockDelta (ADR-M007)', () => {
 
     expect(result).toBe('applied');
     expect(buffer.size).toBe(0);
-    const row = (
-      await db.execute(`SELECT * FROM stock_balances WHERE id = ?`, ['b1'])
-    ).rows[0] as { on_hand: number; version: number };
+    const row = (await db.execute(`SELECT * FROM stock_balances WHERE id = ?`, ['b1'])).rows[0] as {
+      on_hand: number;
+      version: number;
+    };
     expect(row.on_hand).toBe(42);
     expect(row.version).toBe(3);
   });
@@ -54,9 +55,9 @@ describe('applyOrBufferStockDelta (ADR-M007)', () => {
 
     expect(result).toBe('buffered');
     expect(buffer.size).toBe(1);
-    const row = (
-      await db.execute(`SELECT * FROM stock_balances WHERE id = ?`, ['b1'])
-    ).rows[0] as { on_hand: number };
+    const row = (await db.execute(`SELECT * FROM stock_balances WHERE id = ?`, ['b1'])).rows[0] as {
+      on_hand: number;
+    };
     expect(row.on_hand).toBe(10);
   });
 
@@ -82,9 +83,9 @@ describe('applyOrBufferStockDelta (ADR-M007)', () => {
     expect(applied).toBe(1);
     expect(buffer.size).toBe(0);
     buffer.clear();
-    const row = (
-      await db.execute(`SELECT * FROM stock_balances WHERE id = ?`, ['b1'])
-    ).rows[0] as { on_hand: number };
+    const row = (await db.execute(`SELECT * FROM stock_balances WHERE id = ?`, ['b1'])).rows[0] as {
+      on_hand: number;
+    };
     expect(row.on_hand).toBe(77);
   });
 });

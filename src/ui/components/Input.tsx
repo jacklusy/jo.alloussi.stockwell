@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-import {
-  TextInput,
-  type TextInputProps,
-  type TextStyle,
-} from 'react-native';
+import { TextInput, type TextInputProps, type TextStyle } from 'react-native';
 
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
@@ -34,8 +30,8 @@ export function Input({
     borderColor: error
       ? theme.colors.status.danger
       : focused
-        ? theme.colors.border.focus
-        : theme.colors.border.default,
+      ? theme.colors.border.focus
+      : theme.colors.border.default,
     backgroundColor: theme.colors.surface.surfaceRaised,
     color: theme.colors.text.primary,
     fontFamily: theme.typography.body.fontFamily,

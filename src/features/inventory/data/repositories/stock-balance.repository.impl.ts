@@ -69,9 +69,7 @@ export function createStockBalanceRepository(raw: DB): StockBalanceRepository {
            WHERE ${whereSql}`,
           params,
         );
-        const total = Number(
-          (countResult.rows[0] as { total?: number } | undefined)?.total ?? 0,
-        );
+        const total = Number((countResult.rows[0] as { total?: number } | undefined)?.total ?? 0);
 
         const listParams = [...params, limit, offset];
         const listResult = await raw.execute(
@@ -145,9 +143,7 @@ export function createStockBalanceRepository(raw: DB): StockBalanceRepository {
         return Result.ok(updated.value);
       } catch (error) {
         return Result.err(
-          new ServerError(
-            error instanceof Error ? error.message : 'Optimistic update failed',
-          ),
+          new ServerError(error instanceof Error ? error.message : 'Optimistic update failed'),
         );
       }
     },
@@ -163,9 +159,7 @@ export function createStockBalanceRepository(raw: DB): StockBalanceRepository {
         return Result.ok(undefined);
       } catch (error) {
         return Result.err(
-          new ServerError(
-            error instanceof Error ? error.message : 'Authoritative update failed',
-          ),
+          new ServerError(error instanceof Error ? error.message : 'Authoritative update failed'),
         );
       }
     },

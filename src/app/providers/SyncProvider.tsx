@@ -66,8 +66,7 @@ export function SyncProvider({ children }: SyncProviderProps): React.JSX.Element
     };
   }, []);
 
-  const isOffline =
-    !networkStatus.isConnected || networkStatus.isInternetReachable === false;
+  const isOffline = !networkStatus.isConnected || networkStatus.isInternetReachable === false;
 
   return (
     <>

@@ -24,27 +24,24 @@ export type BadgeProps = {
   testID?: string;
 };
 
-export function Badge({
-  label,
-  variant = 'neutral',
-  icon,
-  testID,
-}: BadgeProps): React.JSX.Element {
+export function Badge({ label, variant = 'neutral', icon, testID }: BadgeProps): React.JSX.Element {
   const theme = useTheme();
 
-  const palette: Record<BadgeVariant, { bg: string; fg: 'primary' | 'onBrand' | 'danger' | 'success' | 'warning' }> =
-    {
-      neutral: { bg: theme.colors.surface.surfaceSunken, fg: 'primary' },
-      success: { bg: theme.colors.status.successSubtle, fg: 'success' },
-      warning: { bg: theme.colors.status.warningSubtle, fg: 'warning' },
-      danger: { bg: theme.colors.status.dangerSubtle, fg: 'danger' },
-      info: { bg: theme.colors.status.infoSubtle, fg: 'primary' },
-      'sync-pending': { bg: theme.colors.brand.primarySubtle, fg: 'warning' },
-      'sync-syncing': { bg: theme.colors.status.infoSubtle, fg: 'primary' },
-      'sync-synced': { bg: theme.colors.status.successSubtle, fg: 'success' },
-      'sync-failed': { bg: theme.colors.status.warningSubtle, fg: 'warning' },
-      'sync-conflict': { bg: theme.colors.status.dangerSubtle, fg: 'danger' },
-    };
+  const palette: Record<
+    BadgeVariant,
+    { bg: string; fg: 'primary' | 'onBrand' | 'danger' | 'success' | 'warning' }
+  > = {
+    neutral: { bg: theme.colors.surface.surfaceSunken, fg: 'primary' },
+    success: { bg: theme.colors.status.successSubtle, fg: 'success' },
+    warning: { bg: theme.colors.status.warningSubtle, fg: 'warning' },
+    danger: { bg: theme.colors.status.dangerSubtle, fg: 'danger' },
+    info: { bg: theme.colors.status.infoSubtle, fg: 'primary' },
+    'sync-pending': { bg: theme.colors.brand.primarySubtle, fg: 'warning' },
+    'sync-syncing': { bg: theme.colors.status.infoSubtle, fg: 'primary' },
+    'sync-synced': { bg: theme.colors.status.successSubtle, fg: 'success' },
+    'sync-failed': { bg: theme.colors.status.warningSubtle, fg: 'warning' },
+    'sync-conflict': { bg: theme.colors.status.dangerSubtle, fg: 'danger' },
+  };
 
   const { bg, fg } = palette[variant];
 

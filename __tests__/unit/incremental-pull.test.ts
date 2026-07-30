@@ -76,9 +76,7 @@ describe('pullStockBalances', () => {
   });
 
   it('throws when upsert fails', async () => {
-    mockUpsertMany.mockImplementation(
-      async () => Result.err(new ServerError('db')) as never,
-    );
+    mockUpsertMany.mockImplementation(async () => Result.err(new ServerError('db')) as never);
     const db = createSyncMemoryDb();
     const client = {
       get: jest.fn(async () => ({

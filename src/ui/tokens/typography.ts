@@ -27,7 +27,13 @@ export type TypographyVariant =
 
 type TypeStyle = Pick<
   TextStyle,
-  'fontFamily' | 'fontSize' | 'lineHeight' | 'fontWeight' | 'letterSpacing' | 'textTransform' | 'fontVariant'
+  | 'fontFamily'
+  | 'fontSize'
+  | 'lineHeight'
+  | 'fontWeight'
+  | 'letterSpacing'
+  | 'textTransform'
+  | 'fontVariant'
 >;
 
 export const typography: Record<TypographyVariant, TypeStyle> = {

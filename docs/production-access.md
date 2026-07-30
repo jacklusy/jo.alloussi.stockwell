@@ -24,10 +24,10 @@
 
 ## Status
 
-| Item | Status |
-|---|---|
-| 14-day clock | Manual — owner tracks from closed-track upload date |
-| Production URL | _Pending_ |
+| Item           | Status                                              |
+| -------------- | --------------------------------------------------- |
+| 14-day clock   | Manual — owner tracks from closed-track upload date |
+| Production URL | _Pending_                                           |
 
 When live, replace this line in the README:
 

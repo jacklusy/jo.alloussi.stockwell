@@ -44,8 +44,6 @@ export async function wipeLocalTenantData(
     logger.error('Wipe failed', {
       reason: error instanceof Error ? error.message : 'unknown',
     });
-    return Result.err(
-      new ServerError(error instanceof Error ? error.message : 'Wipe failed'),
-    );
+    return Result.err(new ServerError(error instanceof Error ? error.message : 'Wipe failed'));
   }
 }

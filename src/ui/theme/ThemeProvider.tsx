@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useMemo,
-  type PropsWithChildren,
-} from 'react';
+import React, { createContext, useContext, useMemo, type PropsWithChildren } from 'react';
 import { useColorScheme } from 'react-native';
 
 import { useThemeStore } from '@/ui/theme/theme-store';

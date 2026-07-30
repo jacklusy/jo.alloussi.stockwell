@@ -93,9 +93,7 @@ const MIGRATIONS: Record<number, string[]> = {
     )`,
   ],
   // Example additive migration — MUST NOT touch mutation_queue structure destructively.
-  2: [
-    `ALTER TABLE stock_balances ADD COLUMN low_stock_threshold REAL`,
-  ],
+  2: [`ALTER TABLE stock_balances ADD COLUMN low_stock_threshold REAL`],
 };
 
 async function currentVersion(db: DB): Promise<number> {
@@ -128,10 +126,10 @@ export async function runMigrations(db: DB, target = SCHEMA_VERSION): Promise<vo
     for (const statement of statements) {
       await db.execute(statement);
     }
-    await db.execute('INSERT OR REPLACE INTO schema_migrations (version, applied_at) VALUES (?, ?)', [
-      next,
-      Date.now(),
-    ]);
+    await db.execute(
+      'INSERT OR REPLACE INTO schema_migrations (version, applied_at) VALUES (?, ?)',
+      [next, Date.now()],
+    );
     version = next;
   }
 }

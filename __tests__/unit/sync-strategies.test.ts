@@ -1,4 +1,9 @@
-import { computeBackoffMs, shouldDeadLetter, MAX_ATTEMPTS, BACKOFF_CAP_MS } from '@/sync/engine/backoff';
+import {
+  computeBackoffMs,
+  shouldDeadLetter,
+  MAX_ATTEMPTS,
+  BACKOFF_CAP_MS,
+} from '@/sync/engine/backoff';
 import {
   manualStrategy,
   lastWriteWinsStrategy,

@@ -2,10 +2,7 @@ import React, { useCallback } from 'react';
 import { RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  useNavigation,
-  type CompositeNavigationProp,
-} from '@react-navigation/native';
+import { useNavigation, type CompositeNavigationProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { Box } from '@/ui/primitives/Box';
@@ -47,20 +44,14 @@ export function InventoryListScreen(): React.JSX.Element {
   }, [navigation]);
 
   const renderItem = useCallback(
-    ({ item }: { item: BalanceRowViewModel }) => (
-      <BalanceRow item={item} onPress={onPressRow} />
-    ),
+    ({ item }: { item: BalanceRowViewModel }) => <BalanceRow item={item} onPress={onPressRow} />,
     [onPressRow],
   );
 
   const keyExtractor = useCallback((item: BalanceRowViewModel) => item.id, []);
 
   return (
-    <Box
-      flex={1}
-      background="background"
-      style={{ paddingBottom: insets.bottom }}
-    >
+    <Box flex={1} background="background" style={{ paddingBottom: insets.bottom }}>
       <Box padding={4} gap={3} flex={1}>
         <Box row justify="space-between" align="center" gap={3}>
           <Box flex={1}>
@@ -76,9 +67,7 @@ export function InventoryListScreen(): React.JSX.Element {
             variant="secondary"
             onPress={openScanner}
             accessibilityLabel={t('scanner.open')}
-            leadingIcon={
-              <Icon name="scan" size={18} color={theme.colors.brand.primary} />
-            }
+            leadingIcon={<Icon name="scan" size={18} color={theme.colors.brand.primary} />}
           />
         </Box>
 

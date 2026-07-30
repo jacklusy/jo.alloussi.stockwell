@@ -62,8 +62,7 @@ export function Box({
   const theme = useTheme();
   const s = theme.space;
 
-  const bg =
-    background === 'transparent' ? undefined : theme.colors.surface[background];
+  const bg = background === 'transparent' ? undefined : theme.colors.surface[background];
 
   const elevationStyle = elevation
     ? getElevation(elevation, theme.mode, theme.colors.border.subtle)

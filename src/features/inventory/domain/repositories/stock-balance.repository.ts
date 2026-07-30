@@ -29,10 +29,7 @@ export type StockBalanceRepository = {
   ) => Promise<Result<StockBalance | null, AppError>>;
   upsertMany: (balances: StockBalance[]) => Promise<Result<void, AppError>>;
   /** Optimistic local write — sets pending_sync. Rejects if result would be negative. */
-  applyOptimisticDelta: (
-    id: BalanceId,
-    delta: number,
-  ) => Promise<Result<StockBalance, AppError>>;
+  applyOptimisticDelta: (id: BalanceId, delta: number) => Promise<Result<StockBalance, AppError>>;
   /** Replace local quantities from authoritative server state after conflict/discard. */
   applyAuthoritative: (
     id: BalanceId,

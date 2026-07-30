@@ -42,8 +42,7 @@ describe('AdjustStockUseCase (M-20)', () => {
       list: async () => Result.ok({ items: [], total: 0, page: 1, limit: 50 }),
       getById: async () => Result.ok(current),
       upsertMany: async () => Result.ok(undefined),
-      applyOptimisticDelta: async () =>
-        Result.err(new ValidationError('should not run')),
+      applyOptimisticDelta: async () => Result.err(new ValidationError('should not run')),
       applyAuthoritative: async () => Result.ok(undefined),
       getBySku: async () => Result.ok(null),
     };

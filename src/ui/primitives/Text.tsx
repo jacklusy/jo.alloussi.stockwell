@@ -51,11 +51,7 @@ export function Text({
       {...rest}
       allowFontScaling={allowFontScaling}
       maxFontSizeMultiplier={maxFontSizeMultiplier}
-      style={[
-        theme.typography[variant],
-        { color: colorMap[color], textAlign: align },
-        style,
-      ]}
+      style={[theme.typography[variant], { color: colorMap[color], textAlign: align }, style]}
     />
   );
 }

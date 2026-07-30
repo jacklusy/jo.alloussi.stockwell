@@ -29,9 +29,7 @@ export function useScannerScreen(
   onPermissionBlocked: () => void,
 ): ScannerViewState {
   const warehouseId = useSessionStore((s) => s.warehouseId);
-  const [permission, setPermission] = useState<CameraPermissionState | 'loading'>(
-    'loading',
-  );
+  const [permission, setPermission] = useState<CameraPermissionState | 'loading'>('loading');
   const [torchOn, setTorchOn] = useState(false);
   const [manualSku, setManualSku] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -59,19 +57,17 @@ export function useScannerScreen(
       setIsLookingUp(true);
       setErrorMessage(null);
       const useCase = container.resolve<LookupSkuUseCase>(TOKENS.LOOKUP_SKU_USE_CASE);
-      void useCase
-        .execute({ warehouseId: warehouseId as WarehouseId, sku })
-        .then((result) => {
-          setIsLookingUp(false);
-          if (!result.ok) {
-            setLocked(false);
-            setErrorMessage(result.error.userMessage);
-            ReactNativeHapticFeedback.trigger('notificationError');
-            return;
-          }
-          ReactNativeHapticFeedback.trigger('notificationSuccess');
-          onFoundBalance(result.value.id);
-        });
+      void useCase.execute({ warehouseId: warehouseId as WarehouseId, sku }).then((result) => {
+        setIsLookingUp(false);
+        if (!result.ok) {
+          setLocked(false);
+          setErrorMessage(result.error.userMessage);
+          ReactNativeHapticFeedback.trigger('notificationError');
+          return;
+        }
+        ReactNativeHapticFeedback.trigger('notificationSuccess');
+        onFoundBalance(result.value.id);
+      });
     },
     [locked, onFoundBalance, warehouseId],
   );
