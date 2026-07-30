@@ -13,7 +13,7 @@ import {
   mapBalanceRowToDomain,
   type StockBalanceRow,
 } from '@/features/inventory/data/mappers/stock-balance.mapper';
-import type { BalanceId } from '@/types/ids';
+import type { BalanceId, WarehouseId } from '@/types/ids';
 
 const BALANCE_SELECT = `SELECT
   b.id, b.tenant_id, b.warehouse_id, b.location_id, b.product_id,
@@ -96,6 +96,27 @@ export function createStockBalanceRepository(raw: DB): StockBalanceRepository {
     },
 
     getById,
+
+    async getBySku(warehouseId: WarehouseId, sku: string) {
+      try {
+        const normalised = sku.trim().toUpperCase();
+        if (!normalised) {
+          return Result.ok(null);
+        }
+        const result = await raw.execute(
+          `${BALANCE_SELECT}
+           WHERE b.warehouse_id = ? AND UPPER(p.sku) = ?
+           LIMIT 1`,
+          [warehouseId, normalised],
+        );
+        const row = result.rows[0] as StockBalanceRow | undefined;
+        return Result.ok(row ? mapBalanceRowToDomain(row) : null);
+      } catch (error) {
+        return Result.err(
+          new ServerError(error instanceof Error ? error.message : 'SKU lookup failed'),
+        );
+      }
+    },
 
     async applyOptimisticDelta(id, delta) {
       try {

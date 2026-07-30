@@ -61,6 +61,32 @@ jest.mock('react-native-haptic-feedback', () => ({
   default: { trigger: jest.fn() },
 }));
 
+jest.mock('react-native-vision-camera', () => {
+  const { View } = require('react-native');
+  return {
+    Camera: View,
+    useCameraDevice: () => null,
+    useCodeScanner: () => ({}),
+  };
+});
+
+jest.mock('react-native-permissions', () => ({
+  PERMISSIONS: {
+    IOS: { CAMERA: 'ios.camera' },
+    ANDROID: { CAMERA: 'android.camera' },
+  },
+  RESULTS: {
+    GRANTED: 'granted',
+    DENIED: 'denied',
+    BLOCKED: 'blocked',
+    LIMITED: 'limited',
+    UNAVAILABLE: 'unavailable',
+  },
+  check: jest.fn(async () => 'granted'),
+  request: jest.fn(async () => 'granted'),
+  openSettings: jest.fn(async () => undefined),
+}));
+
 jest.mock('react-native-reanimated', () => {
   const { View } = require('react-native');
   const Animated = {

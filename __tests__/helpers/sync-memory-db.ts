@@ -73,7 +73,49 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.includes('FROM mutation_queue') && q.includes('ORDER BY created_at ASC') && q.includes('LIMIT 1')) {
+      if (/^DELETE FROM mutation_queue\b/i.test(q)) {
+        if (!/\bWHERE\b/i.test(q)) {
+          queue.length = 0;
+          return { rows: [] };
+        }
+        const id = params[0] as string;
+        const idx = queue.findIndex((r) => r.id === id);
+        if (idx >= 0) {
+          queue.splice(idx, 1);
+        }
+        return { rows: [] };
+      }
+
+      if (/^DELETE FROM conflicts\b/i.test(q)) {
+        if (!/\bWHERE\b/i.test(q)) {
+          conflicts.length = 0;
+          return { rows: [] };
+        }
+        const id = params[0] as string;
+        const idx = conflicts.findIndex((c) => c.queue_item_id === id);
+        if (idx >= 0) {
+          conflicts.splice(idx, 1);
+        }
+        return { rows: [] };
+      }
+
+      if (/^DELETE FROM (\w+)/i.test(q)) {
+        const table = /^DELETE FROM (\w+)/i.exec(q)?.[1];
+        if (table === 'sync_state') {
+          syncState.length = 0;
+        }
+        if (table === 'stock_balances') {
+          balances.length = 0;
+        }
+        return { rows: [] };
+      }
+
+      if (
+        q.startsWith('SELECT') &&
+        q.includes('FROM mutation_queue') &&
+        q.includes('ORDER BY created_at ASC') &&
+        q.includes('LIMIT 1')
+      ) {
         const now = (params[0] as number) ?? Date.now();
         const next = queue
           .filter(
@@ -86,7 +128,7 @@ export function createSyncMemoryDb(): DB {
         return { rows: next ? [next] : [] };
       }
 
-      if (q.includes('FROM mutation_queue WHERE status IN')) {
+      if (q.startsWith('SELECT') && q.includes('FROM mutation_queue WHERE status IN')) {
         const statuses = params as string[];
         return {
           rows: queue
@@ -95,13 +137,13 @@ export function createSyncMemoryDb(): DB {
         };
       }
 
-      if (q.includes('SELECT COUNT(*) AS c FROM mutation_queue WHERE status =')) {
+      if (q.startsWith('SELECT COUNT(*) AS c FROM mutation_queue WHERE status =')) {
         const statusMatch = /status = '(\w+)'/.exec(q);
         const status = statusMatch?.[1] ?? (params[0] as string);
         return { rows: [{ c: queue.filter((r) => r.status === status).length }] };
       }
 
-      if (q.includes('SELECT status, COUNT(*) AS c FROM mutation_queue')) {
+      if (q.startsWith('SELECT status, COUNT(*) AS c FROM mutation_queue')) {
         const counts = new Map<string, number>();
         for (const row of queue) {
           counts.set(row.status, (counts.get(row.status) ?? 0) + 1);
@@ -111,13 +153,13 @@ export function createSyncMemoryDb(): DB {
         };
       }
 
-      if (q.includes('FROM mutation_queue WHERE id =')) {
+      if (q.startsWith('SELECT') && q.includes('FROM mutation_queue WHERE id =')) {
         const id = params[0] as string;
         const row = queue.find((r) => r.id === id);
         return { rows: row ? [row] : [] };
       }
 
-      if (q.includes('FROM mutation_queue') && !q.includes('WHERE')) {
+      if (q.startsWith('SELECT') && q.includes('FROM mutation_queue') && !q.includes('WHERE')) {
         return { rows: [...queue] };
       }
 
@@ -197,15 +239,6 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.startsWith('DELETE FROM mutation_queue')) {
-        const id = params[0] as string;
-        const idx = queue.findIndex((r) => r.id === id);
-        if (idx >= 0) {
-          queue.splice(idx, 1);
-        }
-        return { rows: [] };
-      }
-
       if (q.startsWith('INSERT OR REPLACE INTO conflicts') || q.startsWith('INSERT INTO conflicts')) {
         const [queueItemId, localPayload, serverState, detectedAt] = params as [
           string,
@@ -229,7 +262,7 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.includes('FROM conflicts')) {
+      if (q.startsWith('SELECT') && q.includes('FROM conflicts')) {
         return { rows: [...conflicts].sort((a, b) => a.detected_at - b.detected_at) };
       }
 
@@ -242,16 +275,7 @@ export function createSyncMemoryDb(): DB {
         return { rows: [] };
       }
 
-      if (q.startsWith('DELETE FROM conflicts')) {
-        const id = params[0] as string;
-        const idx = conflicts.findIndex((c) => c.queue_item_id === id);
-        if (idx >= 0) {
-          conflicts.splice(idx, 1);
-        }
-        return { rows: [] };
-      }
-
-      if (q.includes('FROM sync_state')) {
+      if (q.startsWith('SELECT') && q.includes('FROM sync_state')) {
         const entity = params[0] as string;
         const row = syncState.find((s) => s.entity === entity);
         return { rows: row ? [row] : [] };

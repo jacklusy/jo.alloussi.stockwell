@@ -14,6 +14,8 @@ import { createAdjustStockUseCase } from '@/features/inventory/application/use-c
 import { createResolveConflictUseCase } from '@/features/inventory/application/use-cases/resolve-conflict.usecase';
 import { createGetConflictDetailUseCase } from '@/features/inventory/application/use-cases/get-conflict-detail.usecase';
 import { createSyncCentreUseCase } from '@/features/inventory/application/use-cases/sync-centre.usecase';
+import { createLookupSkuUseCase } from '@/features/inventory/application/use-cases/lookup-sku.usecase';
+import { createLogoutUseCase } from '@/features/auth/application/use-cases/logout.usecase';
 import { getRawDatabase } from '@/storage/db/client';
 import { networkAdapter } from '@/services/network/netinfo';
 import * as keychain from '@/storage/secure/keychain';
@@ -71,6 +73,18 @@ export function registerDependencies(target: Container = container): void {
       balances: target.resolve(TOKENS.STOCK_BALANCE_REPOSITORY),
       queue: target.resolve(TOKENS.MUTATION_QUEUE),
       syncEngine: target.resolve(TOKENS.SYNC_ENGINE),
+    }),
+  );
+
+  target.register(TOKENS.LOOKUP_SKU_USE_CASE, () =>
+    createLookupSkuUseCase(target.resolve(TOKENS.STOCK_BALANCE_REPOSITORY)),
+  );
+
+  target.register(TOKENS.LOGOUT_USE_CASE, () =>
+    createLogoutUseCase({
+      auth: authRepo,
+      db: getRawDatabase(),
+      queue: target.resolve(TOKENS.MUTATION_QUEUE),
     }),
   );
 

@@ -22,6 +22,11 @@ export type PaginatedBalances = {
 export type StockBalanceRepository = {
   list: (query: ListBalancesQuery) => Promise<Result<PaginatedBalances, AppError>>;
   getById: (id: BalanceId) => Promise<Result<StockBalance | null, AppError>>;
+  /** Resolve a scanned/manual SKU to a balance in the active warehouse. */
+  getBySku: (
+    warehouseId: WarehouseId,
+    sku: string,
+  ) => Promise<Result<StockBalance | null, AppError>>;
   upsertMany: (balances: StockBalance[]) => Promise<Result<void, AppError>>;
   /** Optimistic local write — sets pending_sync. Rejects if result would be negative. */
   applyOptimisticDelta: (

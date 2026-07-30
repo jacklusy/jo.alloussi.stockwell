@@ -9,6 +9,8 @@ import {
   ComponentGalleryScreen,
   ConflictResolutionScreen,
   InventoryListScreen,
+  PermissionDeniedScreen,
+  ScannerScreen,
   SettingsScreen,
   SyncCentreScreen,
 } from '@/features/inventory';
@@ -142,9 +144,19 @@ function ModalsNavigator(): React.JSX.Element {
       }}
     >
       <ModalStack.Screen
+        name={Routes.Scanner}
+        component={ScannerScreen}
+        options={{ title: t('scanner.title') }}
+      />
+      <ModalStack.Screen
         name={Routes.ConflictResolution}
         component={ConflictResolutionScreen}
         options={{ title: t('sync.conflictTitle') }}
+      />
+      <ModalStack.Screen
+        name={Routes.PermissionDenied}
+        component={PermissionDeniedScreen}
+        options={{ title: t('permissions.cameraDeniedHeadline') }}
       />
     </ModalStack.Navigator>
   );

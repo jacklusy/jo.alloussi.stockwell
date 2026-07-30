@@ -3,5 +3,7 @@ export { BalanceDetailScreen } from './presentation/screens/BalanceDetailScreen'
 export { AdjustStockScreen } from './presentation/screens/AdjustStockScreen';
 export { SyncCentreScreen } from './presentation/screens/SyncCentreScreen';
 export { ConflictResolutionScreen } from './presentation/screens/ConflictResolutionScreen';
+export { ScannerScreen } from './presentation/screens/ScannerScreen';
+export { PermissionDeniedScreen } from './presentation/screens/PermissionDeniedScreen';
 export { SettingsScreen } from './presentation/screens/SettingsScreen';
 export { ComponentGalleryScreen } from './presentation/screens/ComponentGalleryScreen';

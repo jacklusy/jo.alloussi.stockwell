@@ -1,24 +1,32 @@
 import React, { useCallback } from 'react';
 import { RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
-import { useNavigation } from '@react-navigation/native';
+import {
+  useNavigation,
+  type CompositeNavigationProp,
+} from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
 import { SearchBar } from '@/ui/components/SearchBar';
+import { Button } from '@/ui/components/Button';
 import { Skeleton } from '@/ui/feedback/Skeleton';
 import { StateView } from '@/ui/feedback/StateView';
 import { BalanceRow } from '@/features/inventory/presentation/components/BalanceRow';
 import { useInventoryListScreen } from '@/features/inventory/presentation/hooks/useInventoryListScreen';
 import type { BalanceRowViewModel } from '@/features/inventory/presentation/mappers/balance-row.mapper';
-import type { InventoryStackParamList } from '@/navigation/types';
+import type { InventoryStackParamList, MainStackParamList } from '@/navigation/types';
 import { Routes } from '@/navigation/routes';
 import { t } from '@/i18n';
 
+type ListNav = CompositeNavigationProp<
+  NativeStackNavigationProp<InventoryStackParamList>,
+  NativeStackNavigationProp<MainStackParamList>
+>;
+
 export function InventoryListScreen(): React.JSX.Element {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<InventoryStackParamList>>();
+  const navigation = useNavigation<ListNav>();
   const state = useInventoryListScreen();
 
   const onPressRow = useCallback(
@@ -27,6 +35,12 @@ export function InventoryListScreen(): React.JSX.Element {
     },
     [navigation],
   );
+
+  const openScanner = useCallback(() => {
+    (navigation.navigate as (name: string, params?: object) => void)(Routes.Modals, {
+      screen: Routes.Scanner,
+    });
+  }, [navigation]);
 
   const renderItem = useCallback(
     ({ item }: { item: BalanceRowViewModel }) => (
@@ -40,7 +54,16 @@ export function InventoryListScreen(): React.JSX.Element {
   return (
     <Box flex={1} background="background">
       <Box padding={4} gap={3} flex={1}>
-        <Text variant="h1">{t('inventory.title')}</Text>
+        <Box row justify="space-between" align="center">
+          <Text variant="h1">{t('inventory.title')}</Text>
+          <Button
+            label={t('scanner.open')}
+            size="sm"
+            variant="secondary"
+            onPress={openScanner}
+            accessibilityLabel={t('scanner.open')}
+          />
+        </Box>
         <SearchBar
           value={state.search}
           onChangeText={state.setSearch}

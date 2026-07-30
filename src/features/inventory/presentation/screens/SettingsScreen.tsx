@@ -11,7 +11,7 @@ import { Routes } from '@/navigation/routes';
 import { Box } from '@/ui/primitives/Box';
 import { Text } from '@/ui/primitives/Text';
 import { ListRow } from '@/ui/components/ListRow';
-import { useThemeStore } from '@/ui/theme';
+import { useSettingsScreen } from '@/features/inventory/presentation/hooks/useSettingsScreen';
 import { t } from '@/i18n';
 
 type SettingsNavigation = CompositeNavigationProp<
@@ -20,8 +20,7 @@ type SettingsNavigation = CompositeNavigationProp<
 >;
 
 export function SettingsScreen(): React.JSX.Element {
-  const setPreference = useThemeStore((s) => s.setPreference);
-  const preference = useThemeStore((s) => s.preference);
+  const state = useSettingsScreen();
   const navigation = useNavigation<SettingsNavigation>();
 
   return (
@@ -29,12 +28,9 @@ export function SettingsScreen(): React.JSX.Element {
       <Text variant="h1">{t('settings.title')}</Text>
       <ListRow
         title={t('settings.theme')}
-        subtitle={preference}
-        onPress={() => {
-          const next =
-            preference === 'system' ? 'light' : preference === 'light' ? 'dark' : 'system';
-          setPreference(next);
-        }}
+        subtitle={state.preference}
+        onPress={state.cycleTheme}
+        accessibilityLabel={`${t('settings.theme')}, ${state.preference}`}
       />
       {__DEV__ ? (
         <ListRow
@@ -43,7 +39,11 @@ export function SettingsScreen(): React.JSX.Element {
           onPress={() => navigation.navigate(Routes.ComponentGallery)}
         />
       ) : null}
-      <ListRow title={t('settings.logout')} onPress={() => undefined} />
+      <ListRow
+        title={t('settings.logout')}
+        onPress={state.logout}
+        accessibilityLabel={t('settings.logout')}
+      />
     </Box>
   );
 }

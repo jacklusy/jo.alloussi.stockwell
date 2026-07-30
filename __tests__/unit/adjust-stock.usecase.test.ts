@@ -45,6 +45,7 @@ describe('AdjustStockUseCase (M-20)', () => {
       applyOptimisticDelta: async () =>
         Result.err(new ValidationError('should not run')),
       applyAuthoritative: async () => Result.ok(undefined),
+      getBySku: async () => Result.ok(null),
     };
     const syncEngine = { run: jest.fn() } as unknown as SyncEngine;
     const useCase = createAdjustStockUseCase({ balances, queue, syncEngine });
@@ -76,6 +77,7 @@ describe('AdjustStockUseCase (M-20)', () => {
         return Result.ok(current);
       },
       applyAuthoritative: async () => Result.ok(undefined),
+      getBySku: async () => Result.ok(null),
     };
     const syncEngine = { run: jest.fn() } as unknown as SyncEngine;
     const useCase = createAdjustStockUseCase({ balances, queue, syncEngine });
