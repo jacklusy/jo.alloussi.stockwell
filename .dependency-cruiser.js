@@ -13,11 +13,11 @@ module.exports = {
     },
     {
       name: 'presentation-no-data',
-      comment: 'Screens/hooks must not import data or infrastructure.',
+      comment: 'Screens/hooks must not import data layer or sync/storage infrastructure.',
       severity: 'error',
       from: { path: '^src/features/[^/]+/presentation' },
       to: {
-        path: '^src/(features/[^/]+/data|services|storage|sync)/',
+        path: '^src/(features/[^/]+/data|storage|sync)/',
       },
     },
     {

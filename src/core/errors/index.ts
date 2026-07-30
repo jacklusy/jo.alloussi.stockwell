@@ -58,6 +58,12 @@ export class TimeoutError extends AppError {
   }
 }
 
+export class NetworkError extends AppError {
+  constructor(message = 'Network error') {
+    super(message, 'NETWORK', 'Something went wrong', 'Auto-retry');
+  }
+}
+
 export class OfflineError extends AppError {
   constructor(message = 'Offline') {
     super(message, 'OFFLINE', 'Saved — will sync when online', 'Automatic');

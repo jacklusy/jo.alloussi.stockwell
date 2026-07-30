@@ -5,6 +5,8 @@ jest.mock('react-native-mmkv', () => {
   return {
     createMMKV: () => ({
       getString: (key) => store.get(key),
+      getBoolean: (key) => store.get(key),
+      getNumber: (key) => store.get(key),
       set: (key, value) => {
         store.set(key, value);
       },
@@ -18,13 +20,48 @@ jest.mock('react-native-mmkv', () => {
   };
 });
 
+jest.mock('react-native-config', () => ({
+  API_BASE_URL: 'http://localhost/api/v1',
+  SENTRY_DSN: '',
+  ENV: 'development',
+}));
+
+jest.mock('react-native-keychain', () => ({
+  setGenericPassword: jest.fn(async () => true),
+  getGenericPassword: jest.fn(async () => false),
+  resetGenericPassword: jest.fn(async () => true),
+  getSupportedBiometryType: jest.fn(async () => null),
+  ACCESS_CONTROL: { BIOMETRY_CURRENT_SET: 'BiometryCurrentSet' },
+  ACCESSIBLE: { WHEN_UNLOCKED_THIS_DEVICE_ONLY: 'AccessibleWhenUnlockedThisDeviceOnly' },
+  AUTHENTICATION_TYPE: { BIOMETRICS: 'AuthenticationWithBiometrics' },
+}));
+
+jest.mock('@react-native-community/netinfo', () => ({
+  __esModule: true,
+  default: {
+    fetch: jest.fn(async () => ({ isConnected: true, isInternetReachable: true })),
+    addEventListener: jest.fn(() => jest.fn()),
+  },
+}));
+
+jest.mock('@shopify/flash-list', () => {
+  const { FlatList } = require('react-native');
+  return { FlashList: FlatList };
+});
+
+jest.mock('@op-engineering/op-sqlite', () => ({
+  open: jest.fn(() => ({
+    execute: jest.fn(async () => ({ rows: [] })),
+    close: jest.fn(),
+  })),
+}));
+
 jest.mock('react-native-haptic-feedback', () => ({
   __esModule: true,
   default: { trigger: jest.fn() },
 }));
 
 jest.mock('react-native-reanimated', () => {
-  const React = require('react');
   const { View } = require('react-native');
   const Animated = {
     View,
@@ -79,7 +116,6 @@ jest.mock('react-native-screens', () => ({
 }));
 
 jest.mock('@gorhom/bottom-sheet', () => {
-  const React = require('react');
   const { View } = require('react-native');
   return {
     BottomSheetModal: View,

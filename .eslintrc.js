@@ -78,8 +78,8 @@ module.exports = {
           },
           {
             from: ['feature-presentation'],
-            disallow: ['feature-data', 'services', 'storage', 'sync'],
-            message: 'Presentation must not import data or infrastructure directly.',
+            disallow: ['feature-data', 'storage', 'sync'],
+            message: 'Presentation must not import data, storage, or sync directly.',
           },
           {
             from: ['ui'],

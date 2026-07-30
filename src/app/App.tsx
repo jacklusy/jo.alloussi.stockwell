@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { RootNavigator } from '@/navigation';
+import { QueryProvider } from '@/app/providers/QueryProvider';
 import { BottomSheetModalProvider, ToastProvider } from '@/ui/components';
 import { ThemeProvider, useTheme } from '@/ui/theme';
 
@@ -22,12 +23,14 @@ export function App(): React.JSX.Element {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <BottomSheetModalProvider>
-            <ToastProvider>
-              <ThemedStatusBar />
-              <RootNavigator />
-            </ToastProvider>
-          </BottomSheetModalProvider>
+          <QueryProvider>
+            <BottomSheetModalProvider>
+              <ToastProvider>
+                <ThemedStatusBar />
+                <RootNavigator />
+              </ToastProvider>
+            </BottomSheetModalProvider>
+          </QueryProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

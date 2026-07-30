@@ -6,11 +6,11 @@ Offline-first React Native client for the Stockwell multi-tenant inventory API.
 
 ## Status
 
-EPIC 1 (Foundation & Design System) in progress.
+EPIC 1 (Foundation) and EPIC 2 (Auth, API & Data Layer) in progress.
 
 ## Stack
 
-React Native CLI 0.86 · New Architecture · TypeScript strict · TanStack Query (Epic 2) · Zustand · op-sqlite + Drizzle (Epic 2) · Reanimated
+React Native CLI 0.86 · New Architecture · TypeScript strict · TanStack Query · Zustand · op-sqlite + Drizzle · Axios + Zod · Reanimated · FlashList
 
 ## Scripts
 
@@ -20,6 +20,7 @@ npm run android
 npm run typecheck
 npm run lint
 npm test
+npm run api:types
 npm run contrast
 npm run deps:cruise
 ```

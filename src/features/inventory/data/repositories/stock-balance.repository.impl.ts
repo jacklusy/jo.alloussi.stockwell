@@ -1,0 +1,170 @@
+import type { DB } from '@op-engineering/op-sqlite';
+
+import { Result } from '@/core/domain';
+import { ServerError, type AppError } from '@/core/errors';
+import type { StockBalance } from '@/features/inventory/domain/entities/stock-balance';
+import type {
+  ListBalancesQuery,
+  PaginatedBalances,
+  StockBalanceRepository,
+} from '@/features/inventory/domain/repositories/stock-balance.repository';
+import {
+  mapBalanceDomainToRow,
+  mapBalanceRowToDomain,
+  type StockBalanceRow,
+} from '@/features/inventory/data/mappers/stock-balance.mapper';
+import type { BalanceId } from '@/types/ids';
+
+/**
+ * Local-first repository. Filtering/sorting happen in SQL.
+ */
+export function createStockBalanceRepository(raw: DB): StockBalanceRepository {
+  return {
+    async list(query: ListBalancesQuery): Promise<Result<PaginatedBalances, AppError>> {
+      try {
+        const limit = Math.min(query.limit, 100);
+        const offset = (query.page - 1) * limit;
+        const params: Array<string | number> = [query.warehouseId];
+        const where: string[] = ['b.warehouse_id = ?'];
+
+        if (query.search && query.search.trim().length > 0) {
+          where.push('(p.sku LIKE ? OR p.name LIKE ? OR l.code LIKE ?)');
+          const term = `%${query.search.trim()}%`;
+          params.push(term, term, term);
+        }
+        if (query.lowStockOnly) {
+          where.push('(b.on_hand - b.reserved) <= 0');
+        }
+        if (query.hasReserved) {
+          where.push('b.reserved > 0');
+        }
+
+        const whereSql = where.join(' AND ');
+        const countResult = await raw.execute(
+          `SELECT COUNT(*) AS total
+           FROM stock_balances b
+           JOIN products p ON p.id = b.product_id
+           JOIN locations l ON l.id = b.location_id
+           WHERE ${whereSql}`,
+          params,
+        );
+        const total = Number(
+          (countResult.rows[0] as { total?: number } | undefined)?.total ?? 0,
+        );
+
+        const listParams = [...params, limit, offset];
+        const listResult = await raw.execute(
+          `SELECT
+             b.id, b.tenant_id, b.warehouse_id, b.location_id, b.product_id,
+             p.sku, p.name AS product_name, l.code AS location_code,
+             b.on_hand, b.reserved, b.version, b.pending_sync, b.updated_at
+           FROM stock_balances b
+           JOIN products p ON p.id = b.product_id
+           JOIN locations l ON l.id = b.location_id
+           WHERE ${whereSql}
+           ORDER BY p.sku ASC
+           LIMIT ? OFFSET ?`,
+          listParams,
+        );
+
+        const items = (listResult.rows as StockBalanceRow[]).map(mapBalanceRowToDomain);
+        return Result.ok({ items, total, page: query.page, limit });
+      } catch (error) {
+        return Result.err(
+          new ServerError(error instanceof Error ? error.message : 'List balances failed'),
+        );
+      }
+    },
+
+    async getById(id: BalanceId): Promise<Result<StockBalance | null, AppError>> {
+      try {
+        const result = await raw.execute(
+          `SELECT
+             b.id, b.tenant_id, b.warehouse_id, b.location_id, b.product_id,
+             p.sku, p.name AS product_name, l.code AS location_code,
+             b.on_hand, b.reserved, b.version, b.pending_sync, b.updated_at
+           FROM stock_balances b
+           JOIN products p ON p.id = b.product_id
+           JOIN locations l ON l.id = b.location_id
+           WHERE b.id = ?
+           LIMIT 1`,
+          [id],
+        );
+        const row = result.rows[0] as StockBalanceRow | undefined;
+        return Result.ok(row ? mapBalanceRowToDomain(row) : null);
+      } catch (error) {
+        return Result.err(
+          new ServerError(error instanceof Error ? error.message : 'Get balance failed'),
+        );
+      }
+    },
+
+    async upsertMany(balances: StockBalance[]): Promise<Result<void, AppError>> {
+      try {
+        for (const balance of balances) {
+          const row = mapBalanceDomainToRow(balance);
+          await raw.execute(
+            `INSERT INTO stock_balances (
+               id, tenant_id, warehouse_id, location_id, product_id,
+               on_hand, reserved, version, pending_sync, updated_at
+             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON CONFLICT(id) DO UPDATE SET
+               on_hand = excluded.on_hand,
+               reserved = excluded.reserved,
+               version = excluded.version,
+               pending_sync = excluded.pending_sync,
+               updated_at = excluded.updated_at`,
+            [
+              row.id,
+              row.tenant_id,
+              row.warehouse_id,
+              row.location_id,
+              row.product_id,
+              row.on_hand,
+              row.reserved,
+              row.version,
+              row.pending_sync,
+              row.updated_at,
+            ],
+          );
+          await raw.execute(
+            `INSERT INTO products (id, tenant_id, sku, name, updated_at)
+             VALUES (?, ?, ?, ?, ?)
+             ON CONFLICT(id) DO UPDATE SET
+               sku = excluded.sku,
+               name = excluded.name,
+               updated_at = excluded.updated_at`,
+            [
+              balance.productId,
+              balance.tenantId,
+              balance.sku,
+              balance.productName,
+              balance.updatedAt,
+            ],
+          );
+          await raw.execute(
+            `INSERT INTO locations (id, tenant_id, warehouse_id, code, name, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?)
+             ON CONFLICT(id) DO UPDATE SET
+               code = excluded.code,
+               name = excluded.name,
+               updated_at = excluded.updated_at`,
+            [
+              balance.locationId,
+              balance.tenantId,
+              balance.warehouseId,
+              balance.locationCode,
+              balance.locationCode,
+              balance.updatedAt,
+            ],
+          );
+        }
+        return Result.ok(undefined);
+      } catch (error) {
+        return Result.err(
+          new ServerError(error instanceof Error ? error.message : 'Upsert balances failed'),
+        );
+      }
+    },
+  };
+}

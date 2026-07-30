@@ -1,0 +1,221 @@
+openapi: 3.0.3
+info:
+  title: Stockwell Inventory API
+  version: 1.0.0
+  description: >
+    Stub OpenAPI contract mirroring Project 1. Point OPENAPI_SPEC_URL at the
+    live Project 1 /openapi.json when available; `npm run api:types` regenerates
+    src/types/api.generated.ts so a server contract change becomes a client compile error.
+servers:
+  - url: /api/v1
+paths:
+  /auth/login:
+    post:
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSession'
+        '401':
+          description: Invalid credentials
+  /auth/refresh:
+    post:
+      operationId: refresh
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSession'
+  /auth/logout:
+    post:
+      operationId: logout
+      responses:
+        '204':
+          description: Logged out
+  /warehouses:
+    get:
+      operationId: listWarehouses
+      responses:
+        '200':
+          description: Warehouse list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Warehouse'
+  /inventory/balances:
+    get:
+      operationId: listBalances
+      parameters:
+        - name: warehouseId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated balances
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StockBalance'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+  /inventory/balances/{id}/adjust:
+    post:
+      operationId: adjustBalance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Adjusted
+        '409':
+          description: Version conflict
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    AuthSession:
+      type: object
+      required: [access_token, refresh_token, user, tenant_id]
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+        tenant_id:
+          type: string
+        user:
+          type: object
+          required: [id, email, display_name, role]
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            display_name:
+              type: string
+            role:
+              type: string
+    Warehouse:
+      type: object
+      required: [id, name, code]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+    StockBalance:
+      type: object
+      required:
+        - id
+        - tenant_id
+        - warehouse_id
+        - location_id
+        - product_id
+        - sku
+        - product_name
+        - location_code
+        - on_hand
+        - reserved
+        - version
+        - updated_at
+      properties:
+        id:
+          type: string
+        tenant_id:
+          type: string
+        warehouse_id:
+          type: string
+        location_id:
+          type: string
+        product_id:
+          type: string
+        sku:
+          type: string
+        product_name:
+          type: string
+        location_code:
+          type: string
+        on_hand:
+          type: number
+        reserved:
+          type: number
+        version:
+          type: integer
+        updated_at:
+          type: string
+          format: date-time
+    PaginationMeta:
+      type: object
+      required: [page, limit, total, totalPages]
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer

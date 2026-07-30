@@ -1,0 +1,4 @@
+# Docs: https://docs.fastlane.tools
+
+app_identifier("jo.alloussi.stockwell")
+package_name("jo.alloussi.stockwell")

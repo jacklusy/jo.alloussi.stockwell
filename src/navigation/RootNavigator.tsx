@@ -9,23 +9,74 @@ import { MainNavigator } from '@/navigation/MainNavigator';
 import { Routes } from '@/navigation/routes';
 import type { RootStackParamList } from '@/navigation/types';
 import { useTheme } from '@/ui/theme';
+import { bootstrapApp } from '@/app/bootstrap/bootstrap-app';
+import { useSessionStore } from '@/services/auth/session-store';
+import { StateView } from '@/ui/feedback/StateView';
+import { Box } from '@/ui/primitives/Box';
 
 enableScreens(true);
 enableFreeze(true);
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-type SessionPhase = 'bootstrapping' | 'unauthenticated' | 'authenticated';
+type SessionPhase = 'bootstrapping' | 'unauthenticated' | 'authenticated' | 'error';
 
 export function RootNavigator(): React.JSX.Element {
   const theme = useTheme();
+  const user = useSessionStore((s) => s.user);
+  const isHydrated = useSessionStore((s) => s.isHydrated);
   const [phase, setPhase] = useState<SessionPhase>('bootstrapping');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Epic 2 will restore session / biometrics here.
-    const id = setTimeout(() => setPhase('authenticated'), 400);
-    return () => clearTimeout(id);
+    let cancelled = false;
+    void bootstrapApp().then((result) => {
+      if (cancelled) {
+        return;
+      }
+      if (result.phase === 'error') {
+        setErrorMessage(result.message);
+        setPhase('error');
+        return;
+      }
+      setPhase(result.phase);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  useEffect(() => {
+    if (!isHydrated || phase === 'bootstrapping' || phase === 'error') {
+      return;
+    }
+    setPhase(user ? 'authenticated' : 'unauthenticated');
+  }, [user, isHydrated, phase]);
+
+  if (phase === 'error') {
+    return (
+      <Box flex={1} background="background">
+        <StateView
+          kind="error"
+          headline="Could not start"
+          body={errorMessage ?? 'Reset local data and try again.'}
+          actionLabel="Retry"
+          onAction={() => {
+            setPhase('bootstrapping');
+            useSessionStore.getState().setHydrated(false);
+            void bootstrapApp().then((result) => {
+              if (result.phase === 'error') {
+                setErrorMessage(result.message);
+                setPhase('error');
+                return;
+              }
+              setPhase(result.phase);
+            });
+          }}
+        />
+      </Box>
+    );
+  }
 
   return (
     <NavigationContainer
